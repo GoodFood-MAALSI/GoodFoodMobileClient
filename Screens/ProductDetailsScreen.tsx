@@ -4,14 +4,16 @@ import CustomButton from '../components/CustomButton';
 import theme from '../assets/styles/themes';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
-import { useCart } from '../CartContext';
+import { useCart } from '../Context/CartContext';
 
 const ProductDetailsScreen = ({ route, navigation }: any) => {
     const { product } = route.params;
     const [currentLocation, setCurrentLocation] = useState<any>(null);
     const [address, setAddress] = useState('Chargement de votre adresse...');
-    const { addItemToCart, cart, getItemsNumber } = useCart();
+    const { addItemToCart, getItemsNumber } = useCart();
     const itemsNumber = getItemsNumber();
+
+    const [quantity, setQuantity] = useState(1);
 
     useEffect(() => {
         (async () => {
@@ -31,13 +33,23 @@ const ProductDetailsScreen = ({ route, navigation }: any) => {
     }, []);
 
     const handleAddToCart = () => {
-        addItemToCart(product, product.restaurantId);
-        Alert.alert('Produit ajouté', `${product.name} a été ajouté au panier.`);
+        for (let i = 0; i < quantity; i++) {
+            addItemToCart(product, product.restaurantId);
+        }
+        Alert.alert('Produit ajouté', `${quantity} x ${product.name} ajouté(s) au panier.`);
+    };
+
+    const incrementQuantity = () => setQuantity(quantity + 1);
+    const decrementQuantity = () => {
+        if (quantity > 1) setQuantity(quantity - 1);
     };
 
     return (
         <View style={styles.container}>
             <View style={styles.header}>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                    <Ionicons name="arrow-back" size={24} color="black" />
+                </TouchableOpacity>
                 <Text style={styles.address}>{address}</Text>
                 <View style={styles.iconsContainer}>
                     <TouchableOpacity>
@@ -55,6 +67,7 @@ const ProductDetailsScreen = ({ route, navigation }: any) => {
                     </TouchableOpacity>
                 </View>
             </View>
+
             <View style={styles.subcontainer}>
                 <Image source={product.image} style={styles.productImage} />
                 <Text style={styles.title}>{product.name}</Text>
@@ -78,7 +91,21 @@ const ProductDetailsScreen = ({ route, navigation }: any) => {
                     renderItem={({ item }) => <Text style={styles.ingredientItem}>• {item}</Text>}
                 />
 
-                <CustomButton text="Ajouter au panier" onPress={() => handleAddToCart()} backgroundColor={theme.colors.success} />
+                <View style={styles.quantityContainer}>
+                    <TouchableOpacity onPress={decrementQuantity} style={styles.quantityButton}>
+                        <Text style={styles.quantityButtonText}>-</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.quantityText}>{quantity}</Text>
+                    <TouchableOpacity onPress={incrementQuantity} style={styles.quantityButton}>
+                        <Text style={styles.quantityButtonText}>+</Text>
+                    </TouchableOpacity>
+                </View>
+
+                <CustomButton
+                    text={`Ajouter ${quantity} au panier`}
+                    onPress={handleAddToCart}
+                    backgroundColor={theme.colors.success}
+                />
             </View>
         </View>
     );
@@ -131,48 +158,71 @@ const styles = StyleSheet.create({
     productImage: {
         width: 250,
         height: 250,
-        borderRadius:
-        theme.spacing.borderRadius.md,
-        marginBottom: theme.spacing.md
+        borderRadius: theme.spacing.borderRadius.md,
+        marginBottom: theme.spacing.md,
     },
     title: {
         fontSize: theme.spacing.fontSize.xl,
         fontWeight: 'bold',
-        marginBottom: theme.spacing.sm
+        marginBottom: theme.spacing.sm,
     },
     price: {
         fontSize: theme.spacing.fontSize.lg,
         fontWeight: 'bold',
         color: theme.colors.primary,
-        marginBottom: theme.spacing.sm
+        marginBottom: theme.spacing.sm,
     },
     description: {
         fontSize: theme.spacing.fontSize.md,
         textAlign: 'center',
         paddingHorizontal: 20,
-        marginBottom: theme.spacing.md
+        marginBottom: theme.spacing.md,
     },
     sectionTitle: {
         fontSize: theme.spacing.fontSize.md,
         fontWeight: 'bold',
-        marginTop: theme.spacing.md
+        marginTop: theme.spacing.md,
+    },
+    calories: {
+        fontSize: theme.spacing.fontSize.md,
+        color: '#FF5733',
+        fontWeight: 'bold',
+        marginBottom: theme.spacing.sm,
+    },
+    ingredientItem: {
+        fontSize: theme.spacing.fontSize.md,
+        textAlign: 'center',
+        marginVertical: 2,
+    },
+    quantityContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginVertical: 20,
+    },
+    quantityButton: {
+        backgroundColor: theme.colors.primary,
+        padding: 10,
+        borderRadius: 5,
+        marginHorizontal: 10,
+    },
+    quantityButtonText: {
+        color: '#FFF',
+        fontSize: 20,
+        fontWeight: 'bold',
+    },
+    quantityText: {
+        fontSize: 20,
+        fontWeight: 'bold',
     },
     infoText: {
         fontSize: theme.spacing.fontSize.md,
         fontWeight: 'bold',
         color: theme.colors.text
     },
-    calories: {
-        fontSize: theme.spacing.fontSize.md,
-        color: '#FF5733',
-        fontWeight: 'bold',
-        marginBottom: theme.spacing.sm
-    },
-    ingredientItem: {
-        fontSize: theme.spacing.fontSize.md,
-        textAlign: 'center',
-        marginVertical: 2
-    },
+    backButton: {
+        padding: 10,
+        marginRight: 10,
+    },    
 });
 
 export default ProductDetailsScreen;

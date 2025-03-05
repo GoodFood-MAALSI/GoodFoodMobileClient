@@ -5,7 +5,7 @@ import CustomTabs from '../components/CustomTabs';
 import theme from '../assets/styles/themes';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
-import { useCart } from '../CartContext';
+import { useCart } from '../Context/CartContext';
 
 const RestaurantMenuScreen = ({ route, navigation }: any) => {
     const { restaurant } = route.params;
@@ -71,6 +71,9 @@ const RestaurantMenuScreen = ({ route, navigation }: any) => {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                    <Ionicons name="arrow-back" size={24} color="black" />
+                </TouchableOpacity>
                 <Text style={styles.address}>{address}</Text>
                 <View style={styles.iconsContainer}>
                     <TouchableOpacity>
@@ -229,6 +232,10 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 12,
         fontWeight: 'bold',
+    },
+    backButton: {
+        padding: 10,
+        marginRight: 10,
     },
 });
 

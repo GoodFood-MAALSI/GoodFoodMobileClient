@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image, TextInput } 
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import CustomTabs from '../components/CustomTabs';
-import { useCart } from '../CartContext';
+import { useCart } from '../Context/CartContext';
 
 const HomeScreen = ({ navigation }: any) => {
     const [currentLocation, setCurrentLocation] = useState<any>(null);
