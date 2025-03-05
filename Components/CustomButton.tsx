@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
-import theme from '../assets/styles/themes';
+import theme from '../Assets/Styles/themes';
 
 interface CustomButtonProps {
     text: string;

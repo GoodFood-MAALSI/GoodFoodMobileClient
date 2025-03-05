@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import colors from '../assets/styles/colors';
+import { View, Text, TextInput, TouchableOpacity, Image } from 'react-native';
+import styles from '../Assets/Styles/SignUpStyles';
 
 export default function SignUpScreen({ navigation }: any) {
     const [email, setEmail] = useState('');
@@ -51,50 +51,3 @@ export default function SignUpScreen({ navigation }: any) {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#FFFFFF',
-        padding: 20,
-    },
-    logo: {
-        width: 120,
-        height: 120,
-        marginBottom: 20,
-    },
-    title: {
-        fontSize: 28,
-        fontWeight: 'bold',
-        color: '#333333',
-        marginBottom: 20,
-    },
-    input: {
-        width: '100%',
-        height: 50,
-        backgroundColor: '#F9F9F9',
-        borderRadius: 8,
-        paddingHorizontal: 15,
-        marginBottom: 15,
-        borderWidth: 1,
-        borderColor: '#E0E0E0',
-        fontSize: 16,
-        color: '#333333',
-    },
-    button: {
-        width: '100%',
-        height: 50,
-        backgroundColor: colors[5],
-        borderRadius: 8,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 20,
-    },
-    buttonText: {
-        color: '#FFFFFF',
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
-});

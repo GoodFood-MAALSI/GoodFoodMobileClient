@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import CustomButton from './CustomButton';
-import theme from '../assets/styles/themes';
+import theme from '../Assets/Styles/themes';
 
 interface CustomCardProps {
     title: string;

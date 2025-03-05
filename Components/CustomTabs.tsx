@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, Dimensions } from 'react-native';
-import theme from '../assets/styles/themes';
+import theme from '../Assets/Styles/themes';
 
 interface TabItem<T extends string> {
     key: T;
