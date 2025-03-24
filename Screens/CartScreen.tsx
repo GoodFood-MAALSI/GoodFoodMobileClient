@@ -2,8 +2,8 @@ import React from "react";
 import { View, Text, Image, FlatList, SafeAreaView, Alert, TouchableOpacity } from 'react-native';
 import CustomButton from '../Components/CustomButton';
 import { useCart } from "../Context/CartContext";
-import theme from '../Assets/Styles/themes';
-import styles from "../Assets/Styles/CartStyles";
+import theme from '../assets/Styles/themes';
+import styles from "../assets/Styles/CartStyles";
 
 const CartScreen = ({ navigation }: any) => {
     const {

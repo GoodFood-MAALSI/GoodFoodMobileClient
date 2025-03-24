@@ -81,6 +81,28 @@ const styles = StyleSheet.create({
         fontSize: 12,
         fontWeight: 'bold',
     },
+    favoriteButton: {
+        position: 'absolute',
+        top: 10,
+        right: 10,
+        zIndex: 1,
+    },
+    favoriteToggleContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 10,
+        marginVertical: 10,
+        justifyContent: 'center',
+    },
+    favoriteToggleText: {
+        marginLeft: 10,
+        fontSize: 16,
+        color: 'grey',
+    },
+    distanceFilterContainer: {
+        padding: 20,
+        alignItems: 'center',
+    },    
 });
 
 export default styles;

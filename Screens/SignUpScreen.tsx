@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image } from 'react-native';
-import styles from '../Assets/Styles/SignUpStyles';
+import styles from '../assets/Styles/SignUpStyles';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function SignUpScreen({ navigation }: any) {
     const [email, setEmail] = useState('');
@@ -17,7 +18,7 @@ export default function SignUpScreen({ navigation }: any) {
     };
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <Image source={require('../assets/logo.png')} style={styles.logo} />
             <Text style={styles.title}>Créer un compte</Text>
             <TextInput
@@ -48,6 +49,6 @@ export default function SignUpScreen({ navigation }: any) {
             <TouchableOpacity style={styles.button} onPress={handleSignUp}>
                 <Text style={styles.buttonText}>Créer un compte</Text>
             </TouchableOpacity>
-        </View>
+        </SafeAreaView>
     );
 }

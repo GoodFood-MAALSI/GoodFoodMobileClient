@@ -5,7 +5,8 @@ import CustomTabs from '../Components/CustomTabs';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { useCart } from '../Context/CartContext';
-import styles from '../Assets/Styles/MenuStyles';
+import styles from '../assets/Styles/MenuStyles';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const RestaurantMenuScreen = ({ route, navigation }: any) => {
     const { restaurant } = route.params;
@@ -69,7 +70,7 @@ const RestaurantMenuScreen = ({ route, navigation }: any) => {
     const itemsNumber = getItemsNumber();
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
                     <Ionicons name="arrow-back" size={24} color="black" />
@@ -79,7 +80,7 @@ const RestaurantMenuScreen = ({ route, navigation }: any) => {
                     <TouchableOpacity>
                         <Ionicons name="notifications-outline" size={24} color="black" />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigation.navigate("CartScreen")}>
+                    <TouchableOpacity onPress={() => navigation.navigate('Tabs', { screen: 'Panier' })}>
                         <View style={styles.iconContainer}>
                             <Ionicons name="cart-outline" size={24} color="black" />
                             {itemsNumber > 0 && (
@@ -124,7 +125,7 @@ const RestaurantMenuScreen = ({ route, navigation }: any) => {
                 renderItem={({ item }) => (
                     <TouchableOpacity
                         style={styles.menuCard}
-                        onPress={() => navigation.navigate('ProductDetailsScreen', { product: item })}
+                        onPress={() => navigation.navigate('ProductDetails', { product: item })}
                     >
                         <Image source={item.image} style={styles.menuImage} />
                         <View style={styles.menuInfo}>
@@ -134,7 +135,7 @@ const RestaurantMenuScreen = ({ route, navigation }: any) => {
                     </TouchableOpacity>
                 )}
             />
-        </View>
+        </SafeAreaView>
     );
 };
 

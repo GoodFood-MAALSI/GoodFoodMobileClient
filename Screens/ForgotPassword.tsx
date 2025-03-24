@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image } from 'react-native';
-import styles from '../Assets/Styles/ForgotPasswordStyles';
+import styles from '../assets/Styles/ForgotPasswordStyles';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ForgotPasswordScreen({ navigation }: any) {
     const [email, setEmail] = useState('');
@@ -11,7 +12,7 @@ export default function ForgotPasswordScreen({ navigation }: any) {
     };
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <Image source={require('../assets/logo.png')} style={styles.logo} />
             <Text style={styles.title}>Mot de passe oublié</Text>
             <Text style={styles.subtitle}>
@@ -29,6 +30,6 @@ export default function ForgotPasswordScreen({ navigation }: any) {
             <TouchableOpacity style={styles.button} onPress={handlePasswordReset}>
                 <Text style={styles.buttonText}>Envoyer le lien</Text>
             </TouchableOpacity>
-        </View>
+        </SafeAreaView>
     );
 }

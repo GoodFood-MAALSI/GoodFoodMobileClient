@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, FlatList, TouchableOpacity, Alert } from 'react-native';
 import CustomButton from '../Components/CustomButton';
-import theme from '../Assets/Styles/themes';
+import theme from '../assets/Styles/themes';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { useCart } from '../Context/CartContext';
-import styles from '../Assets/Styles/ProductDetailsStyles';
+import styles from '../assets/Styles/ProductDetailsStyles';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const ProductDetailsScreen = ({ route, navigation }: any) => {
     const { product } = route.params;
@@ -46,7 +47,7 @@ const ProductDetailsScreen = ({ route, navigation }: any) => {
     };
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
                     <Ionicons name="arrow-back" size={24} color="black" />
@@ -56,7 +57,7 @@ const ProductDetailsScreen = ({ route, navigation }: any) => {
                     <TouchableOpacity>
                         <Ionicons name="notifications-outline" size={24} color="black" />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigation.navigate("CartScreen")}>
+                    <TouchableOpacity onPress={() => navigation.navigate('Tabs', { screen: 'Panier' })}>
                         <View style={styles.iconContainer}>
                             <Ionicons name="cart-outline" size={24} color="black" />
                             {itemsNumber > 0 && (
@@ -108,7 +109,7 @@ const ProductDetailsScreen = ({ route, navigation }: any) => {
                     backgroundColor={theme.colors.success}
                 />
             </View>
-        </View>
+        </SafeAreaView>
     );
 };
 
