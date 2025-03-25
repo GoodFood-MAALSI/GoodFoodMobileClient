@@ -1,4 +1,3 @@
-// App.tsx
 import 'react-native-gesture-handler';
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
@@ -17,7 +16,7 @@ export default function App() {
   return (
     <CartProvider>
       <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Tabs" component={TabNavigator} />
           <Stack.Screen name="RestaurantMenu" component={RestaurantMenuScreen} />
           <Stack.Screen name="ProductDetails" component={ProductDetailsScreen} />

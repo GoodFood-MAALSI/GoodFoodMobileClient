@@ -8,7 +8,7 @@ export default function LoginScreen({ navigation }: any) {
     const [password, setPassword] = useState('');
 
     const handleLogin = () => {
-        navigation.navigate('Home');
+        navigation.navigate('Tabs', {screen: 'Accueil'});
     };
 
     const handleForgotPassword = () => {
@@ -57,7 +57,6 @@ export default function LoginScreen({ navigation }: any) {
                     Créez-en un
                 </Text>
             </Text>
-
         </SafeAreaView>
     );
 }
