@@ -13,7 +13,8 @@ import colors from '../assets/Styles/colors';
 const HomeScreen = ({ navigation }: any) => {
     const [currentLocation, setCurrentLocation] = useState<any>(null);
     const [address, setAddress] = useState('Chargement de votre adresse...');
-    const [selectedCategory, setSelectedCategory] = useState<'all' | string>('all');
+    type Category = 'all' | 'Pizza' | 'Sushi' | 'Burgers';
+    const [selectedCategory, setSelectedCategory] = useState<Category>('all');
     const [favoriteRestaurants, setFavoriteRestaurants] = useState<string[]>([]);
     const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
     const [maxDistance, setMaxDistance] = useState(50);
@@ -81,12 +82,12 @@ const HomeScreen = ({ navigation }: any) => {
 
     const uniqueCategories = ['all', ...new Set(restaurants.map(r => r.category))];
 
-    const handleTabChange = (category: 'all' | string) => {
+    const handleTabChange = (category: Category) => {
         setSelectedCategory(category);
         applyFilters(category, showFavoritesOnly, maxDistance);
     };
 
-    const applyFilters = (category: 'all' | string, showFavorites: boolean, distance: number) => {
+    const applyFilters = (category: Category, showFavorites: boolean, distance: number) => {
         let result = restaurants;
 
         if (showFavorites) {
@@ -184,7 +185,7 @@ const HomeScreen = ({ navigation }: any) => {
 
             <CustomTabs
                 tabs={uniqueCategories.map(category => ({
-                    key: category,
+                    key: category as Category,
                     label: category === 'all' ? 'Tout' : category,
                 }))}
                 activeTab={selectedCategory}

@@ -10,7 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const ProductDetailsScreen = ({ route, navigation }: any) => {
     const { product } = route.params;
-    const [currentLocation, setCurrentLocation] = useState<any>(null);
+    const [setCurrentLocation] = useState<any>(null);
     const [address, setAddress] = useState('Chargement de votre adresse...');
     const { addItemToCart, getItemsNumber } = useCart();
     const itemsNumber = getItemsNumber();

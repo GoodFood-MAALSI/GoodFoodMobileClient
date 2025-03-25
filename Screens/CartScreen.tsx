@@ -115,7 +115,7 @@ const CartScreen = ({ navigation }: any) => {
                     <Text style={styles.emptyCartText}>Ajouter des articles à votre panier pour les visualiser ici.</Text>
                     <CustomButton
                         text="Commander"
-                        onPress={() => navigation.navigate("Accueil")}
+                        onPress={() => navigation.navigate('Tabs', {screen: "Accueil"})}
                         backgroundColor={theme.colors[6]}
                     />
                 </View>
