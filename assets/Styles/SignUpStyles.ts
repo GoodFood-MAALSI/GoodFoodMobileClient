@@ -46,6 +46,14 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
     },
+    footerText: {
+        fontSize: 14,
+        color: '#666666',
+    },
+    signUpText: {
+        color: colors[8],
+        fontWeight: 'bold',
+    },
 });
 
 export default styles;

@@ -1,54 +1,91 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Text, TextInput, TouchableOpacity, Image } from 'react-native';
-import styles from '../assets/Styles/SignUpStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import styles from '../assets/Styles/SignUpStyles';
+import colors from '../assets/Styles/colors';
+import { useSignUp } from '../hooks/useSignup';
 
 export default function SignUpScreen({ navigation }: any) {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    confirmPassword,
+    setConfirmPassword,
+    firstName,
+    setFirstName,
+    lastName,
+    setLastName,
+    error,
+    isLoading,
+    handleSignUp,
+  } = useSignUp();
 
-    const handleSignUp = () => {
-        if (password !== confirmPassword) {
-            alert("Les mots de passe ne correspondent pas.");
-            return;
-        }
-        alert("Compte créé avec succès !");
-        navigation.navigate('Login');
-    };
+  const onSignUpPress = async () => {
+    const success = await handleSignUp();
+    if (success) {
+      navigation.navigate('Login');
+    }
+  };
 
-    return (
-        <SafeAreaView style={styles.container}>
-            <Image source={require('../assets/logo.png')} style={styles.logo} />
-            <Text style={styles.title}>Créer un compte</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Adresse Mail"
-                placeholderTextColor="#B0B0B0"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Mot de passe"
-                placeholderTextColor="#B0B0B0"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Confirmez le mot de passe"
-                placeholderTextColor="#B0B0B0"
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
-                secureTextEntry
-            />
-            <TouchableOpacity style={styles.button} onPress={handleSignUp}>
-                <Text style={styles.buttonText}>Créer un compte</Text>
-            </TouchableOpacity>
-        </SafeAreaView>
-    );
+  return (
+    <SafeAreaView style={styles.container}>
+      <Image source={require('../assets/logo.png')} style={styles.logo} />
+      <Text style={styles.title}>Créer un compte</Text>
+
+      {error && <Text style={{ color: colors.danger }}>{error}</Text>}
+
+      <TextInput
+        style={styles.input}
+        placeholder="Prénom"
+        placeholderTextColor="#B0B0B0"
+        value={firstName}
+        onChangeText={setFirstName}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Nom"
+        placeholderTextColor="#B0B0B0"
+        value={lastName}
+        onChangeText={setLastName}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Adresse Mail"
+        placeholderTextColor="#B0B0B0"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Mot de passe"
+        placeholderTextColor="#B0B0B0"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Confirmez le mot de passe"
+        placeholderTextColor="#B0B0B0"
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
+        secureTextEntry
+      />
+
+      <TouchableOpacity style={styles.button} onPress={onSignUpPress} disabled={isLoading}>
+        <Text style={styles.buttonText}>{isLoading ? 'Chargement...' : 'Créer un compte'}</Text>
+      </TouchableOpacity>
+
+      <Text style={styles.footerText}>
+        Vous avez déjà un compte?{' '}
+        <Text style={styles.signUpText} onPress={() => navigation.navigate('Login')}>
+          Connectez-vous
+        </Text>
+      </Text>
+    </SafeAreaView>
+  );
 }

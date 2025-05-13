@@ -9,22 +9,25 @@ import LoginScreen from './Screens/LoginScreen';
 import SignUpScreen from './Screens/SignUpScreen';
 import ForgotPasswordScreen from './Screens/ForgotPassword';
 import { CartProvider } from './Context/CartContext';
+import { UserProvider } from './Context/UserContext';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <CartProvider>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Tabs" component={TabNavigator} />
-          <Stack.Screen name="RestaurantMenu" component={RestaurantMenuScreen} />
-          <Stack.Screen name="ProductDetails" component={ProductDetailsScreen} />
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="SignUp" component={SignUpScreen} />
-          <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </CartProvider>
+    <UserProvider>
+      <CartProvider>
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Tabs" component={TabNavigator} />
+            <Stack.Screen name="RestaurantMenu" component={RestaurantMenuScreen} />
+            <Stack.Screen name="ProductDetails" component={ProductDetailsScreen} />
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="SignUp" component={SignUpScreen} />
+            <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </CartProvider>
+    </UserProvider>
   );
 }
