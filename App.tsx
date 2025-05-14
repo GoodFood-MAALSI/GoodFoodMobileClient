@@ -9,6 +9,7 @@ import LoginScreen from './Screens/LoginScreen';
 import SignUpScreen from './Screens/SignUpScreen';
 import ForgotPasswordScreen from './Screens/ForgotPassword';
 import ConfirmEmailScreen from './Screens/ConfirmEmailScreen';
+import ResetPasswordScreen from './Screens/ResetPasswordScreen';
 import { CartProvider } from './Context/CartContext';
 import { UserProvider } from './Context/UserContext';
 
@@ -27,6 +28,7 @@ export default function App() {
             <Stack.Screen name="SignUp" component={SignUpScreen} />
             <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
             <Stack.Screen name="Confirmation" component={ConfirmEmailScreen} />
+            <Stack.Screen name="Reset" component={ResetPasswordScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </CartProvider>

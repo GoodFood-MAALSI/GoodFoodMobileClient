@@ -12,7 +12,7 @@ export default function ForgotPasswordScreen({ navigation }: any) {
     const success = await handlePasswordReset();
     if (success) {
       alert(`Un lien de réinitialisation a été envoyé à ${email}.`);
-      navigation.navigate('Login');
+      navigation.navigate('Reset');
     }
   };
 
