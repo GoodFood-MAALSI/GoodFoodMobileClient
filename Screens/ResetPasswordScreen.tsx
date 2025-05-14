@@ -3,7 +3,7 @@ import { Text, TextInput, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../assets/Styles/ForgotPasswordStyles';
 import colors from '../assets/Styles/colors';
-import { useResetPassword } from '../hooks/useResetPassword';
+import { useResetPassword } from '../hooks/auth/useResetPassword';
 
 export default function ResetPasswordScreen({ navigation }: any) {
   const { hash, setHash, newPassword, setNewPassword, handleResetPassword } = useResetPassword();

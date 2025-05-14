@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useUser } from '../Context/UserContext';
+import { useUser } from '../../Context/UserContext';
 
 export const useLogin = () => {
   const [email, setEmail] = useState('');

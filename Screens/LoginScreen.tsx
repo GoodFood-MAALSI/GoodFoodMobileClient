@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, TextInput, TouchableOpacity, Image } from 'react-native';
 import styles from '../assets/Styles/LoginStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLogin } from '../hooks/useLogin';
+import { useLogin } from '../hooks/auth/useLogin';
 import colors from '../assets/Styles/colors';
 
 export default function LoginScreen({ navigation }: any) {
