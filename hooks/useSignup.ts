@@ -26,7 +26,7 @@ export const useSignUp = () => {
     if (validate()) {
       setIsLoading(true);
       try {
-        const response = await fetch('http://192.168.49.1:8080/client/api/auth/register', {
+        const response = await fetch(process.env.EXPO_PUBLIC_APP_API_URL + '/client/api/auth/register', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

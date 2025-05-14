@@ -3,8 +3,11 @@ import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import styles from '../assets/Styles/ProfilStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useUser } from '../Context/UserContext';
 
-export default function ProfileScreen() {
+export default function ProfileScreen({ navigation }: any) {
+  const { logout } = useUser();
+
   const handleEditProfile = () => {
     console.log('Modifier les infos personnelles');
   };
@@ -34,7 +37,8 @@ export default function ProfileScreen() {
   };
 
   const handleLogout = () => {
-    console.log('Déconnexion');
+    logout();
+    navigation.navigate('Login');
   };
 
   return (
@@ -42,7 +46,6 @@ export default function ProfileScreen() {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Text style={styles.title}>Mon Profil</Text>
 
-        {/* Infos personnelles */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Informations personnelles</Text>
 
@@ -67,7 +70,6 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        {/* Adresses de livraison */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Adresses de livraison</Text>
@@ -120,7 +122,6 @@ export default function ProfileScreen() {
           ))}
         </View>
 
-        {/* Déconnexion */}
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Text style={styles.buttonText}>Se déconnecter</Text>
         </TouchableOpacity>

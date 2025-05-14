@@ -82,7 +82,7 @@ export default function SignUpScreen({ navigation }: any) {
 
       <Text style={styles.footerText}>
         Vous avez déjà un compte?{' '}
-        <Text style={styles.signUpText} onPress={() => navigation.navigate('Login')}>
+        <Text style={styles.signUpText} onPress={() => navigation.navigate('Confirmation')}>
           Connectez-vous
         </Text>
       </Text>
