@@ -1,44 +1,50 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import styles from '../assets/Styles/ProfilStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useUser } from '../Context/UserContext';
+import useUserAddresses from '../hooks/profil/useAdresses';
+import AddressModal from '../modal/AdressModal';
 
 export default function ProfileScreen({ navigation }: any) {
   const { logout } = useUser();
+  const { addresses, addAddress, updateAddress, deleteAddress } = useUserAddresses();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [addressToEdit, setAddressToEdit] = useState<any>(null);
 
   const handleEditProfile = () => {
     console.log('Modifier les infos personnelles');
   };
 
   const handleAddAddress = () => {
-    console.log('Ajouter une adresse');
+    setAddressToEdit(null);
+    setModalVisible(true);
   };
 
   const handleEditAddress = (id: string) => {
-    console.log('Modifier adresse', id);
+    const address = addresses.find((address) => address.id === id);
+    if (address) {
+      setAddressToEdit(address);
+      setModalVisible(true);
+    }
   };
 
   const handleDeleteAddress = (id: string) => {
-    console.log('Supprimer adresse', id);
-  };
-
-  const handleAddPayment = () => {
-    console.log('Ajouter une méthode de paiement');
-  };
-
-  const handleEditPayment = (id: string) => {
-    console.log('Modifier paiement', id);
-  };
-
-  const handleDeletePayment = (id: string) => {
-    console.log('Supprimer paiement', id);
+    deleteAddress(id);
   };
 
   const handleLogout = () => {
     logout();
     navigation.navigate('Login');
+  };
+
+  const handleModalSubmit = (addressData: any) => {
+    if (addressToEdit) {
+      updateAddress(addressToEdit.id, addressData);
+    } else {
+      addAddress(addressData);
+    }
   };
 
   return (
@@ -48,7 +54,6 @@ export default function ProfileScreen({ navigation }: any) {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Informations personnelles</Text>
-
           <View style={styles.row}>
             <View>
               <Text style={styles.label}>Nom</Text>
@@ -78,12 +83,9 @@ export default function ProfileScreen({ navigation }: any) {
             </TouchableOpacity>
           </View>
 
-          {[
-            { id: '1', label: '12 rue des Lilas, Paris' },
-            { id: '2', label: '18 avenue Jean Jaurès, Lyon' },
-          ].map((address) => (
+          {addresses.map((address) => (
             <View key={address.id} style={styles.row}>
-              <Text style={styles.value}>🏠 {address.label}</Text>
+              <Text style={styles.value}>🏠 {address.street_number} {address.street}, {address.city}</Text>
               <View style={styles.iconRow}>
                 <TouchableOpacity onPress={() => handleEditAddress(address.id)}>
                   <Ionicons name="create-outline" size={18} style={styles.iconSpacing} />
@@ -96,36 +98,17 @@ export default function ProfileScreen({ navigation }: any) {
           ))}
         </View>
 
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Méthodes de paiement</Text>
-            <TouchableOpacity onPress={handleAddPayment}>
-              <Ionicons name="add-circle-outline" size={22} />
-            </TouchableOpacity>
-          </View>
-
-          {[
-            { id: '1', label: 'Visa •••• 1234' },
-            { id: '2', label: 'MasterCard •••• 5678' },
-          ].map((payment) => (
-            <View key={payment.id} style={styles.row}>
-              <Text style={styles.value}>💳 {payment.label}</Text>
-              <View style={styles.iconRow}>
-                <TouchableOpacity onPress={() => handleEditPayment(payment.id)}>
-                  <Ionicons name="create-outline" size={18} style={styles.iconSpacing} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => handleDeletePayment(payment.id)}>
-                  <Ionicons name="trash-outline" size={18} color="red" />
-                </TouchableOpacity>
-              </View>
-            </View>
-          ))}
-        </View>
-
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Text style={styles.buttonText}>Se déconnecter</Text>
         </TouchableOpacity>
       </ScrollView>
+
+      <AddressModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onSubmit={handleModalSubmit}
+        addressToEdit={addressToEdit}
+      />
     </SafeAreaView>
   );
 }

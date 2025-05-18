@@ -35,14 +35,19 @@ export const useLogin = () => {
         const data = await response.json();
 
         if (response.ok) {
+          const timestamp = data.tokenExpires;
+          const tokenLifeDuration = timestamp - Date.now();
+          const bufferDuration = tokenLifeDuration * 0.10;
+          const expiryTimeWithBuffer = timestamp - bufferDuration;
+
           await AsyncStorage.setItem('token', data.token);
           await AsyncStorage.setItem('refreshToken', data.refreshToken);
-          await AsyncStorage.setItem('tokenExpires', String(data.tokenExpires));
+          await AsyncStorage.setItem('tokenExpires', String(expiryTimeWithBuffer));
           await AsyncStorage.setItem('user', JSON.stringify(data.user));
 
           setToken(data.token);
           setRefreshToken(data.refreshToken);
-          setTokenExpires(data.tokenExpires);
+          setTokenExpires(expiryTimeWithBuffer);
           setUser(data.user);
 
           console.log('Login success:', data);

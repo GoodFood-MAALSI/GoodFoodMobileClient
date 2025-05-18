@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 10,
   },
-  
+
 });
 
 export default styles;

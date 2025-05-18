@@ -25,7 +25,7 @@ export default function SignUpScreen({ navigation }: any) {
   const onSignUpPress = async () => {
     const success = await handleSignUp();
     if (success) {
-      navigation.navigate('Login');
+      navigation.navigate('Confirmation');
     }
   };
 
@@ -82,7 +82,7 @@ export default function SignUpScreen({ navigation }: any) {
 
       <Text style={styles.footerText}>
         Vous avez déjà un compte?{' '}
-        <Text style={styles.signUpText} onPress={() => navigation.navigate('Confirmation')}>
+        <Text style={styles.signUpText} onPress={() => navigation.navigate('Login')}>
           Connectez-vous
         </Text>
       </Text>
