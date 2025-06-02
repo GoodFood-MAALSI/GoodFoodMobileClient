@@ -23,7 +23,7 @@ const useRefreshToken = () => {
         },
       });
 
-      const data = await response.json();
+      const { data } = await response.json();
 
       if (response.ok) {
         await AsyncStorage.setItem('token', data.token);

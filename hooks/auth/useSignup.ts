@@ -26,7 +26,7 @@ export const useSignUp = () => {
     if (validate()) {
       setIsLoading(true);
       try {
-        const response = await fetch(process.env.EXPO_PUBLIC_APP_API_URL + '/client/api/auth/register', {
+        const response = await fetch(process.env.EXPO_PUBLIC_APP_API_URL + process.env.EXPO_PUBLIC_CLIENT_API + '/auth/register', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -39,7 +39,7 @@ export const useSignUp = () => {
           }),
         });
 
-        const data = await response.json();
+        const { data } = await response.json();
 
         if (response.ok) {
           console.log('Sign Up success:', data);

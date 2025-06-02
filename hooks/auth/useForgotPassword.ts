@@ -18,7 +18,7 @@ export const useForgotPassword = () => {
     if (validate()) {
       setIsLoading(true);
       try {
-        const response = await fetch(process.env.EXPO_PUBLIC_APP_API_URL + '/client/api/auth/forgot-password', {
+        const response = await fetch(process.env.EXPO_PUBLIC_APP_API_URL + process.env.EXPO_PUBLIC_CLIENT_API + '/auth/forgot-password', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -28,7 +28,7 @@ export const useForgotPassword = () => {
           }),
         });
 
-        const data = await response.json();
+        const { data } = await response.json();
 
         if (response.ok) {
           console.log('Password reset request success:', data);

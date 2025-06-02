@@ -17,7 +17,7 @@ export const useConfirmEmail = () => {
   const handleConfirmEmail = async () => {
     if (validate()) {
       try {
-        const response = await fetch(process.env.EXPO_PUBLIC_APP_API_URL + '/client/api/auth/confirm-email', {
+        const response = await fetch(process.env.EXPO_PUBLIC_APP_API_URL + process.env.EXPO_PUBLIC_CLIENT_API + '/auth/confirm-email', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -27,7 +27,7 @@ export const useConfirmEmail = () => {
           }),
         });
 
-        const data = await response.json();
+        const { data } = await response.json();
 
         if (response.ok) {
           setMessage('Votre email a été confirmé avec succès.');

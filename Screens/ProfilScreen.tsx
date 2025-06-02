@@ -6,16 +6,30 @@ import { Ionicons } from '@expo/vector-icons';
 import { useUser } from '../Context/UserContext';
 import useUserAddresses from '../hooks/profil/useAdresses';
 import AddressModal from '../modal/AdressModal';
+import useUserProfil from '../hooks/profil/useProfil';
+import ProfilModal from '../modal/ProfilModal';
 
 export default function ProfileScreen({ navigation }: any) {
-  const { logout } = useUser();
+  const { user, logout, setUser } = useUser();
   const { addresses, addAddress, updateAddress, deleteAddress } = useUserAddresses();
   const [modalVisible, setModalVisible] = useState(false);
+  const [profilModalVisible, setProfilModalVisible] = useState(false);
   const [addressToEdit, setAddressToEdit] = useState<any>(null);
+  const { isLoading, error, updateProfil } = useUserProfil();
 
-  const handleEditProfile = () => {
-    console.log('Modifier les infos personnelles');
+  const handleEditProfil = () => {
+    setProfilModalVisible(true);
   };
+
+  const handleProfilSubmit = async (profilData: any) => {
+    const success = await updateProfil(profilData);
+    if (success) {
+      setProfilModalVisible(false);
+    } else {
+      console.error("erreur mise à jour prénom et nom")
+    }
+  };
+
 
   const handleAddAddress = () => {
     setAddressToEdit(null);
@@ -57,9 +71,9 @@ export default function ProfileScreen({ navigation }: any) {
           <View style={styles.row}>
             <View>
               <Text style={styles.label}>Nom</Text>
-              <Text style={styles.value}>Maxence Crespel</Text>
+              <Text style={styles.value}>{user.first_name} {user.last_name}</Text>
             </View>
-            <TouchableOpacity onPress={handleEditProfile}>
+            <TouchableOpacity onPress={handleEditProfil}>
               <Ionicons name="create-outline" size={20} />
             </TouchableOpacity>
           </View>
@@ -67,11 +81,8 @@ export default function ProfileScreen({ navigation }: any) {
           <View style={styles.row}>
             <View>
               <Text style={styles.label}>Email</Text>
-              <Text style={styles.value}>maxence@example.com</Text>
+              <Text style={styles.value}>{user.email}</Text>
             </View>
-            <TouchableOpacity onPress={handleEditProfile}>
-              <Ionicons name="create-outline" size={20} />
-            </TouchableOpacity>
           </View>
         </View>
 
@@ -79,7 +90,7 @@ export default function ProfileScreen({ navigation }: any) {
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Adresses de livraison</Text>
             <TouchableOpacity onPress={handleAddAddress}>
-              <Ionicons name="add-circle-outline" size={22} />
+              <Ionicons name="add-circle-outline" size={25} />
             </TouchableOpacity>
           </View>
 
@@ -109,6 +120,13 @@ export default function ProfileScreen({ navigation }: any) {
         onSubmit={handleModalSubmit}
         addressToEdit={addressToEdit}
       />
+      <ProfilModal
+        visible={profilModalVisible}
+        onClose={() => setProfilModalVisible(false)}
+        onSubmit={handleProfilSubmit}
+        user={user}
+      />
+
     </SafeAreaView>
   );
 }

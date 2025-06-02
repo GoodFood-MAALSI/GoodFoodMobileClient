@@ -12,26 +12,30 @@ import ConfirmEmailScreen from './Screens/ConfirmEmailScreen';
 import ResetPasswordScreen from './Screens/ResetPasswordScreen';
 import { CartProvider } from './Context/CartContext';
 import { UserProvider } from './Context/UserContext';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const Stack = createNativeStackNavigator();
+const queryClient = new QueryClient()
 
 export default function App() {
   return (
-    <UserProvider>
-      <CartProvider>
-        <NavigationContainer>
-          <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="Tabs" component={TabNavigator} />
-            <Stack.Screen name="RestaurantMenu" component={RestaurantMenuScreen} />
-            <Stack.Screen name="ProductDetails" component={ProductDetailsScreen} />
-            <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="SignUp" component={SignUpScreen} />
-            <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-            <Stack.Screen name="Confirmation" component={ConfirmEmailScreen} />
-            <Stack.Screen name="Reset" component={ResetPasswordScreen} />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </CartProvider>
-    </UserProvider>
+    <QueryClientProvider client={queryClient}>
+      <UserProvider>
+        <CartProvider>
+          <NavigationContainer>
+            <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="Tabs" component={TabNavigator} />
+              <Stack.Screen name="RestaurantMenu" component={RestaurantMenuScreen} />
+              <Stack.Screen name="ProductDetails" component={ProductDetailsScreen} />
+              <Stack.Screen name="Login" component={LoginScreen} />
+              <Stack.Screen name="SignUp" component={SignUpScreen} />
+              <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+              <Stack.Screen name="Confirmation" component={ConfirmEmailScreen} />
+              <Stack.Screen name="Reset" component={ResetPasswordScreen} />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </CartProvider>
+      </UserProvider>
+    </QueryClientProvider>
   );
 }

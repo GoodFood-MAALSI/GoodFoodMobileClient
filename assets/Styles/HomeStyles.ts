@@ -102,7 +102,52 @@ const styles = StyleSheet.create({
     distanceFilterContainer: {
         padding: 20,
         alignItems: 'center',
-    },    
+    },
+    selectedAddressContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 15,
+        paddingVertical: 10,
+        backgroundColor: '#f0f0f0',
+        borderRadius: 8,
+        margin: 10,
+    },
+
+    selectedAddressText: {
+        flex: 1,
+        marginHorizontal: 10,
+        fontSize: 16,
+        color: '#000',
+    },
+
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.3)',
+        justifyContent: 'center',
+        paddingHorizontal: 20,
+    },
+
+    modalContainer: {
+        backgroundColor: 'white',
+        borderRadius: 8,
+        maxHeight: 300,
+    },
+
+    addressItem: {
+        padding: 15,
+    },
+
+    addressItemText: {
+        fontSize: 16,
+        color: '#333',
+    },
+
+    separator: {
+        height: 1,
+        backgroundColor: '#ddd',
+        marginHorizontal: 10,
+    },
+
 });
 
 export default styles;

@@ -34,14 +34,14 @@ const useUserAddresses = () => {
         }
 
         try {
-            const response = await fetch(`${process.env.EXPO_PUBLIC_APP_API_URL}/client/api/user-addresses`, {
+            const response = await fetch(`${process.env.EXPO_PUBLIC_APP_API_URL + process.env.EXPO_PUBLIC_CLIENT_API}/user-addresses`, {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
 
-            const data = await response.json();
+            const { data } = await response.json();
             console.log('Fetched addresses:', data);
 
             if (response.ok) {
@@ -86,7 +86,7 @@ const useUserAddresses = () => {
         }
 
         try {
-            const response = await fetch(`${process.env.EXPO_PUBLIC_APP_API_URL}/client/api/user-addresses`, {
+            const response = await fetch(`${process.env.EXPO_PUBLIC_APP_API_URL + process.env.EXPO_PUBLIC_CLIENT_API}/user-addresses`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -95,7 +95,7 @@ const useUserAddresses = () => {
                 body: JSON.stringify(addressData),
             });
 
-            const data = await response.json();
+            const { data } = await response.json();
             console.log('Address added:', data);
 
             if (response.ok) {
@@ -138,7 +138,7 @@ const useUserAddresses = () => {
         }
 
         try {
-            const response = await fetch(`${process.env.EXPO_PUBLIC_APP_API_URL}/client/api/user-addresses/${id}`, {
+            const response = await fetch(`${process.env.EXPO_PUBLIC_APP_API_URL + process.env.EXPO_PUBLIC_CLIENT_API}/user-addresses/${id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -147,7 +147,7 @@ const useUserAddresses = () => {
                 body: JSON.stringify(addressData),
             });
 
-            const data = await response.json();
+            const { data } = await response.json();
             console.log('Address updated:', data);
 
             if (response.ok) {
@@ -191,7 +191,7 @@ const useUserAddresses = () => {
         console.log(id);
 
         try {
-            const response = await fetch(`${process.env.EXPO_PUBLIC_APP_API_URL}/client/api/user-addresses/${id}`, {
+            const response = await fetch(`${process.env.EXPO_PUBLIC_APP_API_URL + process.env.EXPO_PUBLIC_CLIENT_API}/user-addresses/${id}`, {
                 method: 'DELETE',
                 headers: {
                     Authorization: `Bearer ${token}`,

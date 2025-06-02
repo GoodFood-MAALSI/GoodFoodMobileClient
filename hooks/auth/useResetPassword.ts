@@ -17,7 +17,7 @@ export const useResetPassword = () => {
     const handleResetPassword = async () => {
         if (validate()) {
             try {
-                const response = await fetch(process.env.EXPO_PUBLIC_APP_API_URL + '/client/api/auth/reset-password', {
+                const response = await fetch(process.env.EXPO_PUBLIC_APP_API_URL + process.env.EXPO_PUBLIC_CLIENT_API + '/auth/reset-password', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -28,7 +28,7 @@ export const useResetPassword = () => {
                     }),
                 });
 
-                const data = await response.json();
+                const { data } = await response.json();
 
                 if (response.ok) {
                     console.log("Password reset success")

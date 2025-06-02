@@ -6,6 +6,7 @@ export const useLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { setToken, setRefreshToken, setTokenExpires, setUser } = useUser();
 
@@ -19,9 +20,10 @@ export const useLogin = () => {
   };
 
   const handleLogin = async () => {
+    setIsLoading(true);
     if (validate()) {
       try {
-        const response = await fetch(process.env.EXPO_PUBLIC_APP_API_URL + '/client/api/auth/login', {
+        const response = await fetch(process.env.EXPO_PUBLIC_APP_API_URL + process.env.EXPO_PUBLIC_CLIENT_API + '/auth/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -32,8 +34,7 @@ export const useLogin = () => {
           }),
         });
 
-        const data = await response.json();
-
+        const { data } = await response.json();
         if (response.ok) {
           const timestamp = data.tokenExpires;
           const tokenLifeDuration = timestamp - Date.now();
@@ -61,6 +62,8 @@ export const useLogin = () => {
         console.error('Login error:', error);
         setError('Une erreur est survenue. Veuillez réessayer.');
         return false;
+      } finally {
+        setIsLoading(false);
       }
     }
     return false;
@@ -71,6 +74,7 @@ export const useLogin = () => {
     setEmail,
     password,
     setPassword,
+    isLoading,
     error,
     handleLogin,
   };

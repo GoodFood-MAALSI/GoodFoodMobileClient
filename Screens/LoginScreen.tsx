@@ -1,12 +1,12 @@
 import React from 'react';
 import { Text, TextInput, TouchableOpacity, Image } from 'react-native';
-import styles from '../assets/Styles/LoginStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLogin } from '../hooks/auth/useLogin';
+import styles from '../assets/Styles/LoginStyles';
 import colors from '../assets/Styles/colors';
 
 export default function LoginScreen({ navigation }: any) {
-  const { email, setEmail, password, setPassword, error, handleLogin } = useLogin();
+  const { email, setEmail, password, setPassword, error, isLoading, handleLogin } = useLogin();
 
   const onLoginPress = async () => {
     const success = await handleLogin();
@@ -41,8 +41,8 @@ export default function LoginScreen({ navigation }: any) {
         secureTextEntry
       />
 
-      <TouchableOpacity style={styles.button} onPress={onLoginPress}>
-        <Text style={styles.buttonText}>Se connecter</Text>
+      <TouchableOpacity style={styles.button} onPress={onLoginPress} disabled={isLoading}>
+        <Text style={styles.buttonText}>{isLoading ? 'Chargement...' : 'Se connecter'}</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.forgotPassword} onPress={() => navigation.navigate('ForgotPassword')}>
