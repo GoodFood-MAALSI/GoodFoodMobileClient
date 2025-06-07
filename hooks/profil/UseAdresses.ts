@@ -77,11 +77,30 @@ const useUserAddresses = () => {
                 return;
             }
         }
+
         const token = await AsyncStorage.getItem('token');
         addressData.userId = user.id;
 
         if (!token) {
             setError('Vous devez être connecté');
+            return;
+        }
+
+        const fullAddress = `${addressData.street_number || ''}+${addressData.street || ''}+${addressData.postal_code || ''}+${addressData.city || ''}`;
+        try {
+            console.log(`https://api-adresse.data.gouv.fr/search/?type=housenumber&q=${encodeURIComponent(fullAddress)}&limit=1`)
+            const verificationRes = await fetch(`https://api-adresse.data.gouv.fr/search/?type=housenumber&q=${encodeURIComponent(fullAddress)}&limit=1`);
+            const verificationData = await verificationRes.json();
+
+            const found = verificationData?.features?.[0];
+            console.log("Adresses trouvées: ", found)
+            if (!found || verificationData.features.length === 0 || found.properties?.score < 0.5) {
+                setError("Adresse non reconnue. Veuillez vérifier l'exactitude.");
+                return;
+            }
+        } catch (err) {
+            console.error("Erreur lors de la vérification de l'adresse:", err);
+            setError("Impossible de valider l'adresse. Veuillez réessayer plus tard.");
             return;
         }
 
@@ -109,15 +128,14 @@ const useUserAddresses = () => {
                     await addAddress(addressData);
                 } else {
                     setError('Échec du rafraîchissement du token. Veuillez vous reconnecter.');
-                    console.log('Échec du rafraîchissement du token');
                 }
             } else {
-                setError('Erreur lors de l\'ajout de l\'adresse');
+                setError("Erreur lors de l'ajout de l'adresse");
                 console.error('Erreur ajout adresse:', data);
             }
         } catch (err) {
-            setError('Erreur de réseau lors de l\'ajout de l\'adresse');
-            console.error('Erreur réseau ajout adresse:', err);
+            setError("Erreur de réseau lors de l'ajout de l'adresse");
+            console.error("Erreur réseau ajout adresse:", err);
         }
     };
 

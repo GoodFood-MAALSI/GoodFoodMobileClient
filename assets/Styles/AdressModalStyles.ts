@@ -63,6 +63,17 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontWeight: '600',
     },
+    mapButton: {
+        backgroundColor: '#e0e0e0',
+        padding: 12,
+        borderRadius: 8,
+        marginBottom: 10,
+    },
+    mapButtonText: {
+        textAlign: 'center',
+        fontSize: 16,
+    }
+
 });
 
 export default styles;
