@@ -13,6 +13,7 @@ import ResetPasswordScreen from './Screens/ResetPasswordScreen';
 import { CartProvider } from './Context/CartContext';
 import { UserProvider } from './Context/UserContext';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import FavoriteScreen from './Screens/FavoriteScreen';
 
 const Stack = createNativeStackNavigator();
 const queryClient = new QueryClient()
@@ -32,6 +33,7 @@ export default function App() {
               <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
               <Stack.Screen name="Confirmation" component={ConfirmEmailScreen} />
               <Stack.Screen name="Reset" component={ResetPasswordScreen} />
+              <Stack.Screen name="Favoris" component={FavoriteScreen} />
             </Stack.Navigator>
           </NavigationContainer>
         </CartProvider>

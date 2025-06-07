@@ -3,7 +3,7 @@ import { Text, TextInput, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../assets/Styles/ForgotPasswordStyles';
 import colors from '../assets/Styles/colors';
-import { useForgotPassword } from '../hooks/auth/useForgotPassword';
+import { useForgotPassword } from '../hooks/auth/UseForgotPassword';
 
 export default function ForgotPasswordScreen({ navigation }: any) {
   const { email, setEmail, error, isLoading, handlePasswordReset } = useForgotPassword();

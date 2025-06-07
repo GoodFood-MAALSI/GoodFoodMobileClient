@@ -3,7 +3,7 @@ import { Text, TextInput, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../assets/Styles/SignUpStyles';
 import colors from '../assets/Styles/colors';
-import { useSignUp } from '../hooks/auth/useSignup';
+import { useSignUp } from '../hooks/auth/UseSignup';
 
 export default function SignUpScreen({ navigation }: any) {
   const {

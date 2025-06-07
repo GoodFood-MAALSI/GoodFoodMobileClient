@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, TextInput, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLogin } from '../hooks/auth/useLogin';
+import { useLogin } from '../hooks/auth/UseLogin';
 import styles from '../assets/Styles/LoginStyles';
 import colors from '../assets/Styles/colors';
 

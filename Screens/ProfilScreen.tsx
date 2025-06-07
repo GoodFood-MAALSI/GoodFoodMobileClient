@@ -4,13 +4,14 @@ import styles from '../assets/Styles/ProfilStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useUser } from '../Context/UserContext';
-import useUserAddresses from '../hooks/profil/useAdresses';
+import useUserAddresses from '../hooks/profil/UseAdresses';
 import AddressModal from '../modal/AdressModal';
-import useUserProfil from '../hooks/profil/useProfil';
+import useUserProfil from '../hooks/profil/UseProfil';
 import ProfilModal from '../modal/ProfilModal';
+import colors from '../assets/Styles/colors';
 
 export default function ProfileScreen({ navigation }: any) {
-  const { user, logout, setUser } = useUser();
+  const { user, logout } = useUser();
   const { addresses, addAddress, updateAddress, deleteAddress } = useUserAddresses();
   const [modalVisible, setModalVisible] = useState(false);
   const [profilModalVisible, setProfilModalVisible] = useState(false);
@@ -64,14 +65,31 @@ export default function ProfileScreen({ navigation }: any) {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.title}>Mon Profil</Text>
+        <Text style={styles.title}>{user?.first_name} {user?.last_name}</Text>
+        <View style={styles.quickActionsContainer}>
+          <TouchableOpacity
+            style={styles.quickCard}
+            onPress={() => navigation.navigate('Favoris')}
+          >
+            <Ionicons name="heart-outline" size={28} color={colors[7]} />
+            <Text style={styles.quickCardTitle}>Favoris</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.quickCard}
+            onPress={() => console.log("navigation vers mes commandes")}
+          >
+            <Ionicons name="receipt-outline" size={28} color={colors[7]} />
+            <Text style={styles.quickCardTitle}>Commandes</Text>
+          </TouchableOpacity>
+        </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Informations personnelles</Text>
           <View style={styles.row}>
             <View>
               <Text style={styles.label}>Nom</Text>
-              <Text style={styles.value}>{user.first_name} {user.last_name}</Text>
+              <Text style={styles.value}>{user?.first_name} {user?.last_name}</Text>
             </View>
             <TouchableOpacity onPress={handleEditProfil}>
               <Ionicons name="create-outline" size={20} />
@@ -81,7 +99,7 @@ export default function ProfileScreen({ navigation }: any) {
           <View style={styles.row}>
             <View>
               <Text style={styles.label}>Email</Text>
-              <Text style={styles.value}>{user.email}</Text>
+              <Text style={styles.value}>{user?.email}</Text>
             </View>
           </View>
         </View>
@@ -110,7 +128,8 @@ export default function ProfileScreen({ navigation }: any) {
         </View>
 
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Text style={styles.buttonText}>Se déconnecter</Text>
+          <Ionicons name="log-out-outline" size={20} color="#E53935" />
+          <Text style={styles.logoutText}>Se déconnecter</Text>
         </TouchableOpacity>
       </ScrollView>
 

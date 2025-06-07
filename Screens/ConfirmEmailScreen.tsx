@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, TextInput, TouchableOpacity, Image } from 'react-native';
 import styles from '../assets/Styles/SignUpStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useConfirmEmail } from '../hooks/auth/useConfirmEmail';
+import { useConfirmEmail } from '../hooks/auth/UseConfirmEmail';
 
 export default function ConfirmEmailScreen({ navigation }: any) {
   const { hash, setHash, error, message, handleConfirmEmail } = useConfirmEmail();

@@ -11,23 +11,23 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import colors from '../assets/Styles/colors';
 import { useRestaurants } from '../hooks/restaurants/UseRestaurants';
 import debounce from 'lodash.debounce';
-import useUserAddresses from '../hooks/profil/useAdresses';
-import profilstyles from '../assets/Styles/ProfilStyles';
+import useUserAddresses from '../hooks/profil/UseAdresses';
+import useCategories from '../hooks/restaurants/UseCategories';
 
 const HomeScreen = ({ navigation }: any) => {
-    const [currentLocation, setCurrentLocation] = useState<any>(null);
     const [geoAddress, setGeoAddress] = useState('Chargement de votre adresse...');
-    type Category = 'all' | 'Pizza' | 'Sushi' | 'Burgers';
-    const [selectedCategory, setSelectedCategory] = useState<Category>('all');
-    const [favoriteRestaurants, setFavoriteRestaurants] = useState<string[]>([]);
-    const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState<string>('all');
+    const [favoriteRestaurants, setFavoriteRestaurants] = useState<any[]>([]);
     const [maxDistance, setMaxDistance] = useState(50);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedAddress, setSelectedAddress] = useState<string>('');
     const [modalVisible, setModalVisible] = useState(false);
 
-    const { restaurants, filteredRestaurants, error, isLoading, isFetching } = useRestaurants(searchQuery);
+    const { filteredRestaurants, isLoading } = useRestaurants(searchQuery, 15.9, 15.9, maxDistance);
     const { addresses } = useUserAddresses();
+    const { categories } = useCategories();
+
+    const formattedCategories = ['all', ...categories.map(c => c.name)];
 
     useEffect(() => {
         (async () => {
@@ -36,7 +36,6 @@ const HomeScreen = ({ navigation }: any) => {
                 return;
             }
             let location = await Location.getCurrentPositionAsync({});
-            setCurrentLocation(location.coords);
 
             let reverseGeocode = await Location.reverseGeocodeAsync(location.coords);
             if (reverseGeocode.length > 0) {
@@ -45,80 +44,41 @@ const HomeScreen = ({ navigation }: any) => {
                 if (!selectedAddress) setSelectedAddress(adr);
             }
         })();
-
-        // loadFavorites();
     }, []);
 
-    // const loadFavorites = async () => {
-    //     try {
-    //         const favorites = await AsyncStorage.getItem('favoriteRestaurants');
-    //         if (favorites) {
-    //             setFavoriteRestaurants(JSON.parse(favorites));
-    //         }
-    //     } catch (error) {
-    //         console.error('Erreur lors du chargement des favoris :', error);
-    //     }
-    // };
+    useEffect(() => {
+        const loadFavorites = async () => {
+            const stored = await AsyncStorage.getItem('favoriteRestaurants');
+            if (stored) setFavoriteRestaurants(JSON.parse(stored));
+        };
+        loadFavorites();
+    }, []);
 
-    // const saveFavorites = async (favorites: string[]) => {
-    //     try {
-    //         await AsyncStorage.setItem('favoriteRestaurants', JSON.stringify(favorites));
-    //     } catch (error) {
-    //         console.error('Erreur lors de l\'enregistrement des favoris :', error);
-    //     }
-    // };
+    const toggleFavorite = async (restaurant: any) => {
+        try {
+            const stored = await AsyncStorage.getItem('favoriteRestaurants');
+            const parsed: any[] = stored ? JSON.parse(stored) : [];
 
-    // const toggleFavorite = (restaurantId: string) => {
-    //     let updatedFavorites;
-    //     if (favoriteRestaurants.includes(restaurantId)) {
-    //         updatedFavorites = favoriteRestaurants.filter(id => id !== restaurantId);
-    //     } else {
-    //         updatedFavorites = [...favoriteRestaurants, restaurantId];
-    //     }
-    //     setFavoriteRestaurants(updatedFavorites);
-    //     saveFavorites(updatedFavorites);
-    // };
+            const exists = parsed.find((r) => r.id === restaurant.id);
 
-    // const uniqueCategories = ['all', ...new Set(restaurants.map(r => r.category))];
+            let updatedFavorites;
+            if (exists) {
+                updatedFavorites = parsed.filter((r) => r.id !== restaurant.id);
+            } else {
+                updatedFavorites = [...parsed, restaurant];
+            }
 
-    // const handleTabChange = (category: Category) => {
-    //     setSelectedCategory(category);
-    //     applyFilters(category, showFavoritesOnly, maxDistance);
-    // };
+            setFavoriteRestaurants(updatedFavorites);
+            await AsyncStorage.setItem('favoriteRestaurants', JSON.stringify(updatedFavorites));
+        } catch (error) {
+            console.error('Erreur lors du toggle favorite:', error);
+        }
+    };
 
-    // const applyFilters = (category: Category, showFavorites: boolean, distance: number) => {
-    //     let result = restaurants;
 
-    //     if (showFavorites) {
-    //         result = result.filter(r => favoriteRestaurants.includes(r.id));
-    //     }
-
-    //     if (category !== 'all') {
-    //         result = result.filter(r => r.category === category);
-    //     }
-
-    //     if (currentLocation) {
-    //         result = result.filter(r => calculateDistance(r) <= distance);
-    //     }
-
-    //     // setFilteredRestaurants(result);
-    // };
-
-    // const toggleFavoritesView = () => {
-    //     setShowFavoritesOnly(!showFavoritesOnly);
-    //     applyFilters(selectedCategory, !showFavoritesOnly, maxDistance);
-    // };
-
-    // const calculateDistance = (restaurant: any) => {
-    //     const R = 6371;
-    //     const dLat = (restaurant.latitude - currentLocation.latitude) * (Math.PI / 180);
-    //     const dLon = (restaurant.longitude - currentLocation.longitude) * (Math.PI / 180);
-    //     const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    //         Math.cos(currentLocation.latitude * (Math.PI / 180)) * Math.cos(restaurant.latitude * (Math.PI / 180)) *
-    //         Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    //     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    //     return R * c;
-    // };
+    const handleTabChange = (category: any) => {
+        setSelectedCategory(category);
+    };
 
     const handleSearchChange = debounce((query: string) => {
         setSearchQuery(query);
@@ -186,20 +146,7 @@ const HomeScreen = ({ navigation }: any) => {
                 />
             </View>
 
-            {/* <View style={styles.favoriteToggleContainer}>
-                <TouchableOpacity onPress={toggleFavoritesView}>
-                    <Text style={styles.favoriteToggleText}>
-                        <Ionicons
-                            name={showFavoritesOnly ? "heart" : "heart-outline"}
-                            size={28}
-                            color={showFavoritesOnly ? "red" : "grey"}
-                        />
-                        {showFavoritesOnly ? "Afficher tous les restaurants" : "Afficher uniquement les favoris"}
-                    </Text>
-                </TouchableOpacity>
-            </View> */}
-
-            {/* <View style={styles.distanceFilterContainer}>
+            <View style={styles.distanceFilterContainer}>
                 <Text>Distance maximale : {maxDistance} km</Text>
                 <Slider
                     style={{ width: 300, height: 40 }}
@@ -209,22 +156,25 @@ const HomeScreen = ({ navigation }: any) => {
                     value={maxDistance}
                     onValueChange={(value) => {
                         setMaxDistance(value);
-                        applyFilters(selectedCategory, showFavoritesOnly, value);
                     }}
                     minimumTrackTintColor={colors[7]}
                     maximumTrackTintColor="#000000"
                     thumbTintColor={colors[7]}
                 />
-            </View> */}
+            </View>
 
-            {/* <CustomTabs
-                tabs={uniqueCategories.map(category => ({
-                    key: category as Category,
-                    label: category === 'all' ? 'Tout' : category,
-                }))}
-                activeTab={selectedCategory}
-                onTabChange={handleTabChange}
-            /> */}
+            {isLoading ? (
+                <Text style={{ textAlign: 'center', marginVertical: 20 }}>Chargement des catégories...</Text>
+            ) : (
+                <CustomTabs
+                    tabs={formattedCategories.map(category => ({
+                        key: category,
+                        label: category === 'all' ? 'Tout' : category,
+                    }))}
+                    activeTab={selectedCategory}
+                    onTabChange={handleTabChange}
+                />
+            )}
 
             <FlatList
                 data={filteredRestaurants}
@@ -237,18 +187,20 @@ const HomeScreen = ({ navigation }: any) => {
                         <Image source={item.image} style={styles.restaurantImage} />
                         <View style={styles.restaurantInfo}>
                             <Text style={styles.restaurantName}>{item.name}</Text>
-                            <Text style={styles.restaurantAddress}>{item.address}</Text>
+                            <Text style={styles.restaurantAddress}>{item.street_number} {item.street}, {item.city}</Text>
                         </View>
-                        {/* <TouchableOpacity
+                        <TouchableOpacity
                             style={styles.favoriteButton}
-                            onPress={() => toggleFavorite(item.id)}
+                            onPress={() => toggleFavorite(item)}
                         >
                             <Ionicons
-                                name={favoriteRestaurants.includes(item.id) ? 'heart' : 'heart-outline'}
+                                name={favoriteRestaurants.some((fav) => fav.id === item.id)
+                                    ? 'heart' : 'heart-outline'}
                                 size={24}
-                                color={favoriteRestaurants.includes(item.id) ? 'red' : 'grey'}
+                                color={favoriteRestaurants.some((fav) => fav.id === item.id)
+                                    ? colors[7] : 'grey'}
                             />
-                        </TouchableOpacity> */}
+                        </TouchableOpacity>
                     </TouchableOpacity>
                 )}
                 contentContainerStyle={styles.restaurantList}

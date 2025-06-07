@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import useRefreshToken from '../useRefreshToken';
+import useRefreshToken from '../UseRefreshToken';
 import { useUser } from '../../Context/UserContext';
 
 const useUserAddresses = () => {
@@ -188,7 +188,6 @@ const useUserAddresses = () => {
             setError('Vous devez être connecté');
             return;
         }
-        console.log(id);
 
         try {
             const response = await fetch(`${process.env.EXPO_PUBLIC_APP_API_URL + process.env.EXPO_PUBLIC_CLIENT_API}/user-addresses/${id}`, {

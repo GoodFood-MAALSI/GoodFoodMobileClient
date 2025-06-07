@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import useRefreshToken from '../useRefreshToken';
+import useRefreshToken from '../UseRefreshToken';
 import { useUser } from '../../Context/UserContext';
 
 const useUserProfil = () => {
