@@ -17,17 +17,32 @@ import useCategories from '../hooks/restaurants/UseCategories';
 const HomeScreen = ({ navigation }: any) => {
     const [geoAddress, setGeoAddress] = useState('Chargement de votre adresse...');
     const [selectedCategory, setSelectedCategory] = useState<string>('all');
+    const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
     const [favoriteRestaurants, setFavoriteRestaurants] = useState<any[]>([]);
     const [maxDistance, setMaxDistance] = useState(50);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedAddress, setSelectedAddress] = useState<string>('');
     const [modalVisible, setModalVisible] = useState(false);
+    const [coords, setCoords] = useState<{ latitude: number, longitude: number } | null>(null);
 
-    const { filteredRestaurants, isLoading } = useRestaurants(searchQuery, 15.9, 15.9, maxDistance);
+    const { filteredRestaurants, isLoading } = useRestaurants(
+        searchQuery,
+        coords?.latitude ?? 0,
+        coords?.longitude ?? 0,
+        maxDistance,
+        selectedCategoryId
+    );
     const { addresses } = useUserAddresses();
     const { categories } = useCategories();
 
-    const formattedCategories = ['all', ...categories.map(c => c.name)];
+    const formattedCategories = [
+        { key: 'all', label: 'Tout', id: null },
+        ...categories.map(c => ({
+            key: c.name,
+            label: c.name,
+            id: c.id,
+        })),
+    ];
 
     useEffect(() => {
         (async () => {
@@ -38,6 +53,7 @@ const HomeScreen = ({ navigation }: any) => {
             let location = await Location.getCurrentPositionAsync({});
 
             let reverseGeocode = await Location.reverseGeocodeAsync(location.coords);
+            setCoords(location.coords);
             if (reverseGeocode.length > 0) {
                 const adr = `${reverseGeocode[0].streetNumber || ''} ${reverseGeocode[0].street || ''}, ${reverseGeocode[0].city || ''}`.trim();
                 setGeoAddress(adr);
@@ -75,9 +91,10 @@ const HomeScreen = ({ navigation }: any) => {
         }
     };
 
-
-    const handleTabChange = (category: any) => {
-        setSelectedCategory(category);
+    const handleTabChange = (key: string) => {
+        const selected = formattedCategories.find(c => c.key === key);
+        setSelectedCategory(key);
+        setSelectedCategoryId(selected?.id || null); // si "Tout", alors id === null
     };
 
     const handleSearchChange = debounce((query: string) => {
@@ -168,8 +185,8 @@ const HomeScreen = ({ navigation }: any) => {
             ) : (
                 <CustomTabs
                     tabs={formattedCategories.map(category => ({
-                        key: category,
-                        label: category === 'all' ? 'Tout' : category,
+                        key: category.key,
+                        label: category.label,
                     }))}
                     activeTab={selectedCategory}
                     onTabChange={handleTabChange}

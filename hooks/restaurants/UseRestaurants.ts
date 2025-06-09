@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const fetchRestaurants = async (searchQuery: string, lat?: number, long?: number, perimeter?: number) => {
+const fetchRestaurants = async (searchQuery: string, lat?: number, long?: number, perimeter?: number, category?: number | null) => {
   const token = await AsyncStorage.getItem('token');
   if (!token) throw new Error('Vous devez être connecté');
 
@@ -10,6 +10,9 @@ const fetchRestaurants = async (searchQuery: string, lat?: number, long?: number
   if (lat) queryParams.append('lat', lat.toString());
   if (long) queryParams.append('long', long.toString());
   if (perimeter) queryParams.append('perimeter', (perimeter * 1000).toString());
+  if (category !== null && category !== undefined) {
+    queryParams.append('restaurant_type', category.toString());
+  }
   const url = `${process.env.EXPO_PUBLIC_APP_API_URL + process.env.EXPO_PUBLIC_RESTAURANT_API}/restaurant?${queryParams.toString()}`;
 
   const response = await fetch(url, {
@@ -26,13 +29,13 @@ const fetchRestaurants = async (searchQuery: string, lat?: number, long?: number
   return data;
 };
 
-export const useRestaurants = (searchQuery: string, lat?: number, long?: number, perimeter?: number) => {
+export const useRestaurants = (searchQuery: string, lat?: number, long?: number, perimeter?: number, category?: number | null) => {
   const {
     data: restaurantsData,
     ...rest
   } = useQuery({
-    queryKey: ['restaurants', searchQuery, lat, long, perimeter],
-    queryFn: () => fetchRestaurants(searchQuery, lat, long, perimeter),
+    queryKey: ['restaurants', searchQuery, lat, long, perimeter, category],
+    queryFn: () => fetchRestaurants(searchQuery, lat, long, perimeter, category),
   });
 
   return {
