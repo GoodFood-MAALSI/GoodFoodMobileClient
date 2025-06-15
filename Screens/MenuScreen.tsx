@@ -3,7 +3,6 @@ import { View, Text, FlatList, Image, TouchableOpacity, ActivityIndicator } from
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
 import { useCart } from '../Context/CartContext';
 import useRestaurantDetails from '../hooks/restaurants/UseRestaurantDetails';
 import CustomTabs from '../Components/CustomTabs';
@@ -21,8 +20,9 @@ const RestaurantMenuScreen = ({ route, navigation }: any) => {
   useEffect(() => {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') return;
-
+      if (status !== 'granted'){
+        return;
+      }
       const location = await Location.getCurrentPositionAsync({});
       const geo = await Location.reverseGeocodeAsync(location.coords);
       if (geo.length > 0) {
@@ -72,23 +72,19 @@ const RestaurantMenuScreen = ({ route, navigation }: any) => {
           </TouchableOpacity>
         </View>
       </View>
-
       <Text style={styles.title}>{restaurant.name} - Menu</Text>
-
       <CustomTabs
         tabs={[{ key: 'all', label: 'Tout' }, ...categories]}
         activeTab={selectedCategoryId?.toString() || 'all'}
         onTabChange={(key: string) => setSelectedCategoryId(key === 'all' ? null : parseInt(key))}
       />
-
       <FlatList
         data={filteredItems}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.menuCard}
-            // onPress={() => navigation.navigate('ProductDetails', { product: item })}
-            onPress={() => console.log(item.menuItemOptions.menuItemOptionsValue)}
+            onPress={() => navigation.navigate('ProductDetails', { product: item })}
           >
             <Image source={{ uri: item.picture }} style={styles.menuImage} />
             <View style={styles.menuInfo}>

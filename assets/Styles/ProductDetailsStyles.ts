@@ -7,9 +7,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF',
     },
     subcontainer: {
-        flex: 1,
-        backgroundColor: '#FFFFFF',
+        paddingBottom: 40,
         alignItems: 'center',
+        paddingHorizontal: 20,
     },
     header: {
         flexDirection: 'row',
@@ -112,7 +112,39 @@ const styles = StyleSheet.create({
     backButton: {
         padding: 10,
         marginRight: 10,
-    },    
+    },
+        optionHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'flex-end',
+        marginBottom: 4,
+    },
+    optionDescription: {
+        fontSize: 12,
+        color: '#888',
+    },
+    optionRequired: {
+        fontSize: 12,
+        color: '#d9534f',
+        fontWeight: 'bold',
+    },
+    checkboxContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    checkbox: {
+        marginRight: 10,
+    },
+    optionContainer: {
+        marginTop: 20,
+        width: '90%',
+    },
+    optionItem: {
+        backgroundColor: '#f0f0f0',
+        padding: 10,
+        borderRadius: 8,
+        marginVertical: 5,
+    },
 });
 
 export default styles;

@@ -120,7 +120,6 @@ const HomeScreen = ({ navigation }: any) => {
                         <Ionicons name="chevron-down" size={15} color="black" />
                     </Text>
                 </TouchableOpacity>
-
                 <Modal visible={modalVisible} transparent animationType="fade" onRequestClose={() => setModalVisible(false)}>
                     <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPressOut={() => setModalVisible(false)}>
                         <View style={styles.modalContainer}>
@@ -137,7 +136,6 @@ const HomeScreen = ({ navigation }: any) => {
                         </View>
                     </TouchableOpacity>
                 </Modal>
-
                 <View style={styles.iconsContainer}>
                     <TouchableOpacity>
                         <Ionicons name="notifications-outline" size={24} color="black" />
@@ -154,7 +152,6 @@ const HomeScreen = ({ navigation }: any) => {
                     </TouchableOpacity>
                 </View>
             </View>
-
             <View style={styles.searchContainer}>
                 <TextInput
                     style={styles.searchInput}
@@ -162,7 +159,6 @@ const HomeScreen = ({ navigation }: any) => {
                     onChangeText={handleSearchChange}
                 />
             </View>
-
             <View style={styles.distanceFilterContainer}>
                 <Text>Distance maximale : {maxDistance} km</Text>
                 <Slider
@@ -179,7 +175,6 @@ const HomeScreen = ({ navigation }: any) => {
                     thumbTintColor={colors[7]}
                 />
             </View>
-
             {isLoading ? (
                 <Text style={{ textAlign: 'center', marginVertical: 20 }}>Chargement des catégories...</Text>
             ) : (
@@ -192,7 +187,6 @@ const HomeScreen = ({ navigation }: any) => {
                     onTabChange={handleTabChange}
                 />
             )}
-
             <FlatList
                 data={filteredRestaurants}
                 keyExtractor={(item) => item.id}
