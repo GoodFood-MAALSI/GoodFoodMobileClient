@@ -50,6 +50,7 @@ const HomeScreen = ({ navigation }: any) => {
 
     useEffect(() => {
         (async () => {
+            console.log(filteredRestaurants)
             let { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
                 return;
@@ -114,7 +115,6 @@ const HomeScreen = ({ navigation }: any) => {
         }, 500);
     }, []);
 
-    // Nettoyage à l'unmount
     useEffect(() => {
         return () => debouncedUpdateQuery.cancel();
     }, [debouncedUpdateQuery]);
@@ -254,7 +254,20 @@ const HomeScreen = ({ navigation }: any) => {
                         <Image source={item.image} style={styles.restaurantImage} />
                         <View style={styles.restaurantInfo}>
                             <Text style={styles.restaurantName}>{item.name}</Text>
-                            <Text style={styles.restaurantAddress}>{item.street_number} {item.street}, {item.city}</Text>
+
+                            {/* Affichage de la note moyenne */}
+                            {item.average_rating != null && (
+                                <View style={styles.ratingContainer}>
+                                    <Ionicons name="star" size={14} color="#FFD700" style={styles.starIcon} />
+                                    <Text style={styles.ratingText}>
+                                        {item.average_rating.toFixed(1)}
+                                    </Text>
+                                </View>
+                            )}
+
+                            <Text style={styles.restaurantAddress}>
+                                {item.street_number} {item.street}, {item.city}
+                            </Text>
                         </View>
                         <TouchableOpacity
                             style={styles.favoriteButton}

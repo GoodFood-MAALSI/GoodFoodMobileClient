@@ -203,6 +203,20 @@ const styles = StyleSheet.create({
         shadowRadius: 2,
         elevation: 3,
     },
+    ratingContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 2,
+        marginBottom: 2,
+    },
+    starIcon: {
+        marginRight: 4,
+    },
+    ratingText: {
+        fontSize: 13,
+        color: '#333',
+        fontWeight: '600',
+    },
 });
 
 export default styles;
