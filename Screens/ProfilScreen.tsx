@@ -38,7 +38,7 @@ export default function ProfileScreen({ navigation }: any) {
   };
 
   const handleEditAddress = (id: string) => {
-    const address = addresses.find((address) => address.id === id);
+    const address = addresses.find((address:any) => address.id === id);
     if (address) {
       setAddressToEdit(address);
       setModalVisible(true);
@@ -112,7 +112,7 @@ export default function ProfileScreen({ navigation }: any) {
             </TouchableOpacity>
           </View>
 
-          {addresses.map((address) => (
+          {addresses.map((address:any) => (
             <View key={address.id} style={styles.row}>
               <View>
                 <Text style={styles.label}>{address.name || 'Adresse'}</Text>

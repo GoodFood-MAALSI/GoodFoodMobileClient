@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import colors from './colors';
 
 const styles = StyleSheet.create({
     container: {
@@ -140,6 +141,67 @@ const styles = StyleSheet.create({
         height: 1,
         backgroundColor: '#ddd',
         marginHorizontal: 10,
+    },
+    historyContainer: {
+        marginHorizontal: 20,
+        marginBottom: 10,
+    },
+    historyHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    historyTitle: {
+        fontWeight: 'bold',
+        fontSize: 16,
+    },
+    clearAllText: {
+        color: colors.danger,
+        fontSize: 14,
+    },
+    historyItem: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingVertical: 6,
+        borderBottomWidth: 0.5,
+        borderColor: '#ccc',
+    },
+    historyText: {
+        fontSize: 14,
+        color: '#333',
+    },
+    searchWrapper: {
+        paddingHorizontal: 20,
+        marginTop: 10,
+        zIndex: 10,
+        position: 'relative',
+    },
+    searchBar: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#f1f1f1',
+        borderRadius: 30,
+        paddingHorizontal: 15,
+        paddingVertical: 8,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 3,
+        elevation: 2,
+    },
+    searchIcon: {
+        marginRight: 8,
+    },
+    historyDropdown: {
+        backgroundColor: '#fff',
+        marginTop: 4,
+        borderRadius: 8,
+        padding: 10,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+        elevation: 3,
     },
 });
 

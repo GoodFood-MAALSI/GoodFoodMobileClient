@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { View, Text, TouchableOpacity, FlatList, Image, TextInput, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
@@ -12,6 +12,7 @@ import colors from '../assets/Styles/colors';
 import { useRestaurants } from '../hooks/restaurants/UseRestaurants';
 import debounce from 'lodash.debounce';
 import useUserAddresses from '../hooks/profil/UseAdresses';
+import useSearchHistory from '../hooks/profil/UseSearchHistory';
 import useCategories from '../hooks/restaurants/UseCategories';
 
 const HomeScreen = ({ navigation }: any) => {
@@ -20,10 +21,13 @@ const HomeScreen = ({ navigation }: any) => {
     const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
     const [favoriteRestaurants, setFavoriteRestaurants] = useState<any[]>([]);
     const [maxDistance, setMaxDistance] = useState(50);
+    const [searchInput, setSearchInput] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedAddress, setSelectedAddress] = useState<string>('');
     const [modalVisible, setModalVisible] = useState(false);
     const [coords, setCoords] = useState<{ latitude: number, longitude: number } | null>(null);
+    const { history, addHistory, deleteHistory, clearAllHistory } = useSearchHistory();
+    const [isSearchFocused, setIsSearchFocused] = useState(false);
 
     const { filteredRestaurants, isLoading } = useRestaurants(
         searchQuery,
@@ -94,12 +98,26 @@ const HomeScreen = ({ navigation }: any) => {
     const handleTabChange = (key: string) => {
         const selected = formattedCategories.find(c => c.key === key);
         setSelectedCategory(key);
-        setSelectedCategoryId(selected?.id || null); // si "Tout", alors id === null
+        setSelectedCategoryId(selected?.id || null);
     };
 
-    const handleSearchChange = debounce((query: string) => {
-        setSearchQuery(query);
-    }, 500);
+    useEffect(() => {
+        if (searchQuery.length >= 3) {
+            addHistory(searchQuery);
+        }
+    }, [searchQuery]);
+
+
+    const debouncedUpdateQuery = useMemo(() => {
+        return debounce((text: string) => {
+            setSearchQuery(text);
+        }, 500);
+    }, []);
+
+    // Nettoyage à l'unmount
+    useEffect(() => {
+        return () => debouncedUpdateQuery.cancel();
+    }, [debouncedUpdateQuery]);
 
     const { getItemsNumber } = useCart();
     const itemsNumber = getItemsNumber();
@@ -152,12 +170,50 @@ const HomeScreen = ({ navigation }: any) => {
                     </TouchableOpacity>
                 </View>
             </View>
-            <View style={styles.searchContainer}>
-                <TextInput
-                    style={styles.searchInput}
-                    placeholder="Rechercher un restaurant..."
-                    onChangeText={handleSearchChange}
-                />
+            <View style={styles.searchWrapper}>
+                <View style={styles.searchBar}>
+                    <Ionicons name="search" size={18} color="#888" style={styles.searchIcon} />
+                    <TextInput
+                        style={styles.searchInput}
+                        placeholder="Rechercher un restaurant..."
+                        placeholderTextColor="#999"
+                        value={searchInput}
+                        onFocus={() => setIsSearchFocused(true)}
+                        onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
+                        onChangeText={(text) => {
+                            setSearchInput(text);           // fluide
+                            debouncedUpdateQuery(text);    // logique différée
+                        }}
+                    />
+
+                </View>
+
+                {isSearchFocused && history.length > 0 && (
+                    <View style={styles.historyDropdown}>
+                        <View style={styles.historyHeader}>
+                            <Text style={styles.historyTitle}>Recherches récentes</Text>
+                            <TouchableOpacity onPress={clearAllHistory}>
+                                <Text style={styles.clearAllText}>Tout effacer</Text>
+                            </TouchableOpacity>
+                        </View>
+                        {history.map(item => (
+                            <TouchableOpacity
+                                key={item.id}
+                                style={styles.historyItem}
+                                onPress={() => {
+                                    setSearchQuery(item.search_query);
+                                    addHistory(item.search_query);
+                                    setIsSearchFocused(false);
+                                }}
+                            >
+                                <Text style={styles.historyText}>{item.search_query}</Text>
+                                <TouchableOpacity onPress={() => deleteHistory(item.id)}>
+                                    <Ionicons name="close-outline" size={18} color="#888" />
+                                </TouchableOpacity>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                )}
             </View>
             <View style={styles.distanceFilterContainer}>
                 <Text>Distance maximale : {maxDistance} km</Text>
