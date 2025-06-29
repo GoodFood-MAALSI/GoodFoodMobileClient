@@ -34,7 +34,7 @@ const useUserAddresses = () => {
         }
 
         try {
-            const response = await fetch(`${process.env.EXPO_PUBLIC_APP_API_URL + process.env.EXPO_PUBLIC_CLIENT_API}/user-addresses`, {
+            const response = await fetch(`${process.env.EXPO_PUBLIC_APP_API_URL + process.env.EXPO_PUBLIC_CLIENT_API}/user-addresses/me`, {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -43,7 +43,6 @@ const useUserAddresses = () => {
 
             const { data } = await response.json();
             console.log('Fetched addresses:', data);
-
             if (response.ok) {
                 setAddresses(data);
                 console.log('Adresses récupérées avec succès');
@@ -79,7 +78,7 @@ const useUserAddresses = () => {
         }
 
         const token = await AsyncStorage.getItem('token');
-        addressData.userId = user.id;
+        // addressData.userId = user.id;
 
         if (!token) {
             setError('Vous devez être connecté');
@@ -105,6 +104,7 @@ const useUserAddresses = () => {
         }
 
         try {
+            console.log(JSON.stringify(addressData))
             const response = await fetch(`${process.env.EXPO_PUBLIC_APP_API_URL + process.env.EXPO_PUBLIC_CLIENT_API}/user-addresses`, {
                 method: 'POST',
                 headers: {
@@ -115,7 +115,6 @@ const useUserAddresses = () => {
             });
 
             const { data } = await response.json();
-            console.log('Address added:', data);
 
             if (response.ok) {
                 console.log('Adresse ajoutée avec succès');

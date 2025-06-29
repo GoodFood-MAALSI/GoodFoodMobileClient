@@ -10,7 +10,7 @@ import theme from '../assets/Styles/themes';
 import styles from '../assets/Styles/ProductDetailsStyles';
 
 const ProductDetailsScreen = ({ route, navigation }: any) => {
-    const { product } = route.params;
+    const { product, restaurant } = route.params;
     const [address, setAddress] = useState('Chargement de votre adresse...');
     const [quantity, setQuantity] = useState(1);
     const [selectedOptions, setSelectedOptions] = useState<{ [optionId: number]: number[] }>({});
@@ -77,11 +77,22 @@ const ProductDetailsScreen = ({ route, navigation }: any) => {
 
     const handleAddToCart = () => {
         if (!validateSelections()) return;
+        const restaurantId = product.restaurantId;
+        console.log(product)
+        console.log(restaurant)
+
         for (let i = 0; i < quantity; i++) {
-            addItemToCart({ ...product, selectedOptions }, product.restaurantId);
+            addItemToCart(
+                {
+                    ...product,
+                    selectedOptions,
+                },
+                restaurant?.name
+            );
         }
         Alert.alert('Produit ajouté', `${quantity} x ${product.name} ajouté(s) au panier.`);
     };
+
 
     return (
         <SafeAreaView style={styles.container}>

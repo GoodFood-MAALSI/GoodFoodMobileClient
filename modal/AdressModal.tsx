@@ -12,6 +12,7 @@ interface AddressModalProps {
 }
 
 const AddressModal: React.FC<AddressModalProps> = ({ visible, onClose, onSubmit, addressToEdit }) => {
+  const [name, setName] = useState(addressToEdit?.name || '');
   const [streetNumber, setStreetNumber] = useState(addressToEdit?.street_number || '');
   const [street, setStreet] = useState(addressToEdit?.street || '');
   const [city, setCity] = useState(addressToEdit?.city || '');
@@ -23,6 +24,7 @@ const AddressModal: React.FC<AddressModalProps> = ({ visible, onClose, onSubmit,
 
   useEffect(() => {
     if (addressToEdit) {
+      setName(addressToEdit.name || '');
       setStreetNumber(addressToEdit.street_number);
       setStreet(addressToEdit.street);
       setCity(addressToEdit.city);
@@ -32,14 +34,16 @@ const AddressModal: React.FC<AddressModalProps> = ({ visible, onClose, onSubmit,
     }
   }, [addressToEdit]);
 
+
   const handleSubmit = () => {
     const addressData = {
+      name,
       street_number: streetNumber,
       street,
       city,
       postal_code: postalCode,
       country,
-      is_default: isDefault,
+      // is_default: isDefault,
     };
     onSubmit(addressData);
     onClose();
@@ -57,6 +61,14 @@ const AddressModal: React.FC<AddressModalProps> = ({ visible, onClose, onSubmit,
             <TouchableOpacity onPress={() => setShowMap(true)} style={styles.mapButton}>
               <Text style={styles.mapButtonText}>📍 Choisir sur la carte</Text>
             </TouchableOpacity>
+
+            <TextInput
+              style={styles.input}
+              placeholder="Nom de l'adresse (ex: Domicile, Travail)"
+              placeholderTextColor="#B0B0B0"
+              value={name}
+              onChangeText={setName}
+            />
 
             <TextInput
               style={styles.input}

@@ -114,7 +114,13 @@ export default function ProfileScreen({ navigation }: any) {
 
           {addresses.map((address) => (
             <View key={address.id} style={styles.row}>
-              <Text style={styles.value}>🏠 {address.street_number} {address.street}, {address.city}</Text>
+              <View>
+                <Text style={styles.label}>{address.name || 'Adresse'}</Text>
+                <Text style={styles.value}>
+                  🏠 {address.street_number} {address.street}, {address.postal_code} {address.city}
+                </Text>
+              </View>
+
               <View style={styles.iconRow}>
                 <TouchableOpacity onPress={() => handleEditAddress(address.id)}>
                   <Ionicons name="create-outline" size={18} style={styles.iconSpacing} />
