@@ -254,8 +254,6 @@ const HomeScreen = ({ navigation }: any) => {
                         <Image source={item.image} style={styles.restaurantImage} />
                         <View style={styles.restaurantInfo}>
                             <Text style={styles.restaurantName}>{item.name}</Text>
-
-                            {/* Affichage de la note moyenne */}
                             {item.average_rating != null && (
                                 <View style={styles.ratingContainer}>
                                     <Ionicons name="star" size={14} color="#FFD700" style={styles.starIcon} />
@@ -264,7 +262,6 @@ const HomeScreen = ({ navigation }: any) => {
                                     </Text>
                                 </View>
                             )}
-
                             <Text style={styles.restaurantAddress}>
                                 {item.street_number} {item.street}, {item.city}
                             </Text>

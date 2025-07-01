@@ -77,9 +77,6 @@ const ProductDetailsScreen = ({ route, navigation }: any) => {
 
     const handleAddToCart = () => {
         if (!validateSelections()) return;
-        const restaurantId = product.restaurantId;
-        console.log(product)
-        console.log(restaurant)
 
         for (let i = 0; i < quantity; i++) {
             addItemToCart(

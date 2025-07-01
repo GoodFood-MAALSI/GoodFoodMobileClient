@@ -43,7 +43,6 @@ const AddressModal: React.FC<AddressModalProps> = ({ visible, onClose, onSubmit,
       city,
       postal_code: postalCode,
       country,
-      // is_default: isDefault,
     };
     onSubmit(addressData);
     onClose();

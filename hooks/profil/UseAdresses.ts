@@ -42,7 +42,6 @@ const useUserAddresses = () => {
             });
 
             const { data } = await response.json();
-            console.log('Fetched addresses:', data);
             if (response.ok) {
                 setAddresses(data);
                 console.log('Adresses récupérées avec succès');
@@ -78,8 +77,6 @@ const useUserAddresses = () => {
         }
 
         const token = await AsyncStorage.getItem('token');
-        // addressData.userId = user.id;
-
         if (!token) {
             setError('Vous devez être connecté');
             return;
@@ -87,12 +84,10 @@ const useUserAddresses = () => {
 
         const fullAddress = `${addressData.street_number || ''}+${addressData.street || ''}+${addressData.postal_code || ''}+${addressData.city || ''}`;
         try {
-            console.log(`https://api-adresse.data.gouv.fr/search/?type=housenumber&q=${encodeURIComponent(fullAddress)}&limit=1`)
             const verificationRes = await fetch(`https://api-adresse.data.gouv.fr/search/?type=housenumber&q=${encodeURIComponent(fullAddress)}&limit=1`);
             const verificationData = await verificationRes.json();
 
             const found = verificationData?.features?.[0];
-            console.log("Adresses trouvées: ", found)
             if (!found || verificationData.features.length === 0 || found.properties?.score < 0.5) {
                 setError("Adresse non reconnue. Veuillez vérifier l'exactitude.");
                 return;
@@ -104,7 +99,6 @@ const useUserAddresses = () => {
         }
 
         try {
-            console.log(JSON.stringify(addressData))
             const response = await fetch(`${process.env.EXPO_PUBLIC_APP_API_URL + process.env.EXPO_PUBLIC_CLIENT_API}/user-addresses`, {
                 method: 'POST',
                 headers: {
@@ -165,7 +159,6 @@ const useUserAddresses = () => {
             });
 
             const { data } = await response.json();
-            console.log('Address updated:', data);
 
             if (response.ok) {
                 console.log('Adresse mise à jour avec succès');
@@ -218,9 +211,6 @@ const useUserAddresses = () => {
             if (response.status !== 204) {
                 data = await response.json();
             }
-
-            console.log('Address deleted:', data);
-
             if (response.ok) {
                 console.log('Adresse supprimée avec succès');
                 fetchAddresses();

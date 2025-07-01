@@ -7,6 +7,8 @@ import { useCart } from '../Context/CartContext';
 import useRestaurantDetails from '../hooks/restaurants/UseRestaurantDetails';
 import CustomTabs from '../Components/CustomTabs';
 import styles from '../assets/Styles/MenuStyles';
+import ReviewModal from '../modal/ReviewModal';
+import useReview from '../hooks/restaurants/UseReview';
 
 const RestaurantMenuScreen = ({ route, navigation }: any) => {
   const { restaurant } = route.params;
@@ -17,10 +19,13 @@ const RestaurantMenuScreen = ({ route, navigation }: any) => {
   const { getItemsNumber } = useCart();
   const itemsNumber = getItemsNumber();
 
+  const [reviewModalVisible, setReviewModalVisible] = useState(false);
+  const { addReview } = useReview();
+
   useEffect(() => {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted'){
+      if (status !== 'granted') {
         return;
       }
       const location = await Location.getCurrentPositionAsync({});
@@ -49,6 +54,14 @@ const RestaurantMenuScreen = ({ route, navigation }: any) => {
     .filter((cat: any) => !selectedCategoryId || cat.id === selectedCategoryId)
     .flatMap((cat: any) => cat.menuItems);
 
+  const handleAddReview = () => {
+    setReviewModalVisible(true);
+  };
+
+  const handleReviewSubmit = (review: any) => {
+    addReview(review, restaurantData.id);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -72,7 +85,20 @@ const RestaurantMenuScreen = ({ route, navigation }: any) => {
           </TouchableOpacity>
         </View>
       </View>
-      <Text style={styles.title}>{restaurant.name} - Menu</Text>
+      <Text style={styles.title}>{restaurant.name}</Text>
+      <Text style={styles.restaurantAddress}>
+        {restaurant.street_number} {restaurant.street}, {restaurant.city}
+      </Text>
+      <Text style={styles.description}>{restaurant.description}</Text>
+      <View style={styles.reviewContainer}>
+        <Text style={styles.reviewText}>
+          ⭐ {restaurantData.average_rating?.toFixed(1) || '–'} / 5 ({restaurantData?.review_count || 0} avis)
+        </Text>
+        <TouchableOpacity onPress={handleAddReview}>
+          <Text style={styles.addReviewLink}>Ajouter un avis</Text>
+        </TouchableOpacity>
+      </View>
+
       <CustomTabs
         tabs={[{ key: 'all', label: 'Tout' }, ...categories]}
         activeTab={selectedCategoryId?.toString() || 'all'}
@@ -89,12 +115,18 @@ const RestaurantMenuScreen = ({ route, navigation }: any) => {
             <Image source={{ uri: item.picture }} style={styles.menuImage} />
             <View style={styles.menuInfo}>
               <Text style={styles.menuName}>{item.name}</Text>
-              <Text style={styles.menuPrice}>{item.description}</Text>
+              <Text style={styles.menuDescription}>{item.description}</Text>
               <Text style={styles.menuPrice}>{item.price} €</Text>
             </View>
           </TouchableOpacity>
         )}
       />
+      <ReviewModal
+        visible={reviewModalVisible}
+        onClose={() => setReviewModalVisible(false)}
+        onSubmit={handleReviewSubmit}
+      />
+
     </SafeAreaView>
   );
 };

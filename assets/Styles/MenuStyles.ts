@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 import theme from './themes';
+import colors from './colors';
 
 const styles = StyleSheet.create({
     container: {
@@ -7,11 +8,20 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFF',
     },
     title: {
+        marginTop: theme.spacing.md,
         fontSize: theme.spacing.fontSize.xl,
         fontWeight: 'bold',
-        marginBottom: theme.spacing.md,
+        marginBottom: theme.spacing.xs,
         textAlign: 'center',
         color: theme.colors.text,
+    },
+    description: {
+        marginTop: 4,
+        fontSize: theme.spacing.fontSize.sm,
+        // fontWeight: 'bold',
+        marginBottom: theme.spacing.md,
+        textAlign: 'center',
+        color: '#666',
     },
     header: {
         flexDirection: 'row',
@@ -72,6 +82,11 @@ const styles = StyleSheet.create({
         fontSize: theme.spacing.fontSize.md,
         fontWeight: 'bold',
     },
+    menuDescription: {
+        fontSize: theme.spacing.fontSize.sm,
+        color: '#666',
+        marginBottom: theme.spacing.sm,
+    },
     menuPrice: {
         fontSize: theme.spacing.fontSize.sm,
         color: theme.colors.text,
@@ -99,6 +114,27 @@ const styles = StyleSheet.create({
     backButton: {
         padding: 10,
         marginRight: 10,
+    },
+    reviewContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginHorizontal: 16,
+        marginBottom: 8,
+    },
+    reviewText: {
+        fontSize: 14,
+        color: '#333',
+    },
+    addReviewLink: {
+        color: colors[10],
+        fontSize: 14,
+        fontWeight: '600',
+    },
+    restaurantAddress: {
+        fontSize: 14,
+        color: '#666',
+        textAlign: 'center',
     },
 });
 

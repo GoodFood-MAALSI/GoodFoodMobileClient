@@ -122,10 +122,6 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         });
     };
 
-    useEffect(() => {
-        console.log("Nouveau panier mis à jour: ", cart);
-    }, [cart]);
-
     const contextValue = useMemo(() => ({
         cart,
         addItemToCart,
