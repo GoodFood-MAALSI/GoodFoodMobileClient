@@ -44,13 +44,17 @@ const FavoriteScreen = ({ navigation }: any) => {
                 keyExtractor={(item) => item.id}
                 contentContainerStyle={styles.list}
                 renderItem={({ item }) => (
-                    <View style={styles.card}>
-                        <Image source={item.image} style={styles.image} />
-                        <View style={styles.info}>
-                            <Text style={styles.name}>{item.name}</Text>
-                            <Text style={styles.address}>{item.street_number} {item.street}, {item.city}</Text>
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate('RestaurantMenu', { restaurant: item })}
+                    >
+                        <View style={styles.card}>
+                            <Image source={item.image} style={styles.image} />
+                            <View style={styles.info}>
+                                <Text style={styles.name}>{item.name}</Text>
+                                <Text style={styles.address}>{item.street_number} {item.street}, {item.city}</Text>
+                            </View>
                         </View>
-                    </View>
+                    </TouchableOpacity>
                 )}
             />
         </SafeAreaView>
