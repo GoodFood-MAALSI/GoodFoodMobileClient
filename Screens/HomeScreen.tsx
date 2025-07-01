@@ -181,8 +181,8 @@ const HomeScreen = ({ navigation }: any) => {
                         onFocus={() => setIsSearchFocused(true)}
                         onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
                         onChangeText={(text) => {
-                            setSearchInput(text);           // fluide
-                            debouncedUpdateQuery(text);    // logique différée
+                            setSearchInput(text);
+                            debouncedUpdateQuery(text);
                         }}
                     />
 

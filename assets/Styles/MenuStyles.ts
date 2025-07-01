@@ -18,7 +18,6 @@ const styles = StyleSheet.create({
     description: {
         marginTop: 4,
         fontSize: theme.spacing.fontSize.sm,
-        // fontWeight: 'bold',
         marginBottom: theme.spacing.md,
         textAlign: 'center',
         color: '#666',

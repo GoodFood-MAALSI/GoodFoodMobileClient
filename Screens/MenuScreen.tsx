@@ -59,6 +59,7 @@ const RestaurantMenuScreen = ({ route, navigation }: any) => {
   };
 
   const handleReviewSubmit = (review: any) => {
+    console.log(restaurantData.review_count)
     addReview(review, restaurantData.id);
   };
 

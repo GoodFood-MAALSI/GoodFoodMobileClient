@@ -7,7 +7,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#00000066',
         justifyContent: 'center',
         alignItems: 'center',
-        // margin: theme.spacing.sm,
     },
     modalContainer: {
         backgroundColor: 'white',

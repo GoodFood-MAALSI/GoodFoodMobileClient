@@ -61,7 +61,6 @@ const styles = StyleSheet.create({
         color: colors[7],
         textAlign: 'center',
     },
-
 });
 
 export default styles;

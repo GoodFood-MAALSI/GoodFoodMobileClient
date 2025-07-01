@@ -27,7 +27,8 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ visible, onClose, onSubmit })
   const handleStarPress = (value: number) => setRating(value);
 
   const handleSubmit = () => {
-    if (!rating || !review.trim()) return;
+    if (!rating || !review.trim())
+      return;
     onSubmit({ rating, review });
     setRating(0);
     setReview('');

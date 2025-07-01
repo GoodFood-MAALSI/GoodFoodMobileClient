@@ -38,7 +38,7 @@ export default function ProfileScreen({ navigation }: any) {
   };
 
   const handleEditAddress = (id: string) => {
-    const address = addresses.find((address:any) => address.id === id);
+    const address = addresses.find((address: any) => address.id === id);
     if (address) {
       setAddressToEdit(address);
       setModalVisible(true);
@@ -73,6 +73,14 @@ export default function ProfileScreen({ navigation }: any) {
           >
             <Ionicons name="heart-outline" size={28} color={colors[7]} />
             <Text style={styles.quickCardTitle}>Favoris</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.quickCard}
+            onPress={() => navigation.navigate('Reviews')}
+          >
+            <Ionicons name="star-outline" size={28} color={colors[7]} />
+            <Text style={styles.quickCardTitle}>Avis</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -112,7 +120,7 @@ export default function ProfileScreen({ navigation }: any) {
             </TouchableOpacity>
           </View>
 
-          {addresses.map((address:any) => (
+          {addresses.map((address: any) => (
             <View key={address.id} style={styles.row}>
               <View>
                 <Text style={styles.label}>{address.name || 'Adresse'}</Text>
