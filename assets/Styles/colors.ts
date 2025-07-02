@@ -17,7 +17,8 @@ const colors = {
     border: '#76C893',
     placeholder: '#1E6091',
     danger: '#f00509',
-    success: '#4CAF50'
+    success: '#4CAF50',
+    warning: '#ff9800',
   };
   
   export default colors;

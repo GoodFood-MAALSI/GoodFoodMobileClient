@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import * as Location from 'expo-location';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useCart } from '../Context/CartContext';
 import useRestaurantDetails from '../hooks/restaurants/UseRestaurantDetails';
@@ -9,6 +8,7 @@ import CustomTabs from '../Components/CustomTabs';
 import styles from '../assets/Styles/MenuStyles';
 import ReviewModal from '../modal/ReviewModal';
 import useReview from '../hooks/restaurants/UseReview';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const RestaurantMenuScreen = ({ route, navigation }: any) => {
   const { restaurant } = route.params;
@@ -23,18 +23,19 @@ const RestaurantMenuScreen = ({ route, navigation }: any) => {
   const { addReview } = useReview();
 
   useEffect(() => {
-    (async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        return;
+    const loadAddress = async () => {
+      try {
+        const storedAddress = await AsyncStorage.getItem('address') || '';
+
+          const addressParts = storedAddress.split(',');
+          const formattedAddress = `${addressParts[0]}, ${addressParts[1]}`.trim();
+          setAddress(formattedAddress);
+      } catch (error) {
+        console.error('Erreur lors du chargement de l\'adresse :', error);
       }
-      const location = await Location.getCurrentPositionAsync({});
-      const geo = await Location.reverseGeocodeAsync(location.coords);
-      if (geo.length > 0) {
-        const adr = `${geo[0].streetNumber || ''} ${geo[0].street || ''}, ${geo[0].city || ''}`.trim();
-        setAddress(adr);
-      }
-    })();
+    };
+
+    loadAddress();
   }, []);
 
   if (isLoading || !restaurantData) {
@@ -59,16 +60,12 @@ const RestaurantMenuScreen = ({ route, navigation }: any) => {
   };
 
   const handleReviewSubmit = (review: any) => {
-    console.log(restaurantData.review_count)
     addReview(review, restaurantData.id);
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        {/* <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="black" />
-        </TouchableOpacity> */}
         <Text style={styles.address}>{address}</Text>
         <View style={styles.iconsContainer}>
           <TouchableOpacity>

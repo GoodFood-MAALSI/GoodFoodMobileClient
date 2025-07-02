@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useMemo, ReactNode } from 'react';
 
 export interface Product {
     id: string;
@@ -16,13 +16,21 @@ interface CartItem extends Product {
     quantity: number;
 }
 
+interface RestaurantInfo {
+    name: string;
+    id: string;
+}
+
 interface Cart {
-    [restaurantId: string]: CartItem[];
+    [restaurantId: string]: {
+        restaurantInfo: RestaurantInfo;
+        items: CartItem[];
+    };
 }
 
 interface CartContextType {
     cart: Cart;
-    addItemToCart: (product: Product, restaurantId: string) => void;
+    addItemToCart: (product: Product, restaurantName: string, restaurantId: string) => void;
     clearCart: () => void;
     getItemsNumber: () => number;
     getCartPrice: () => number;
@@ -42,55 +50,61 @@ interface CartProviderProps {
 export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     const [cart, setCart] = useState<Cart>({});
 
-    const addItemToCart = (product: Product, restaurantId: string) => {
+    const addItemToCart = (product: Product, restaurantName: string, restaurantId: string) => {
         setCart((prevCart) => {
-            const existingCart = prevCart[restaurantId] || [];
+            const existingCart = prevCart[restaurantId]?.items || [];
             const existingItem = existingCart.find(item => item.id === product.id);
 
             if (existingItem) {
                 return {
                     ...prevCart,
-                    [restaurantId]: existingCart.map(item =>
-                        item.id === product.id
-                            ? { ...item, quantity: item.quantity + 1 }
-                            : item
-                    ),
+                    [restaurantId]: {
+                        restaurantInfo: { name: restaurantName, id: restaurantId },
+                        items: existingCart.map(item =>
+                            item.id === product.id
+                                ? { ...item, quantity: item.quantity + 1 }
+                                : item
+                        ),
+                    },
                 };
             } else {
                 return {
                     ...prevCart,
-                    [restaurantId]: [...existingCart, { ...product, quantity: 1 }],
+                    [restaurantId]: {
+                        restaurantInfo: { name: restaurantName, id: restaurantId },
+                        items: [...existingCart, { ...product, quantity: 1 }],
+                    },
                 };
             }
         });
     };
 
     const getItemsNumber = () => {
-        return Object.values(cart).flat().reduce((total, item) => total + item.quantity, 0);
+        return Object.values(cart).flatMap(restaurant => restaurant.items).reduce((total, item) => total + item.quantity, 0);
     };
 
     const getCartPrice = () => {
-        return Object.values(cart).flat().reduce((total, item) => total + item.price * item.quantity, 0);
+        return Object.values(cart).flatMap(restaurant => restaurant.items).reduce((total, item) => total + item.price * item.quantity, 0);
     };
 
     const getCartPriceById = (restaurantId: string) => {
-        const restaurantCart = cart[restaurantId] || [];
+        const restaurantCart = cart[restaurantId]?.items || [];
         return restaurantCart.reduce((total, item) => total + item.price * item.quantity, 0);
     };
 
     const getRestaurantCart = (restaurantId: string) => {
-        return cart[restaurantId] || [];
+        return cart[restaurantId]?.items || [];
     };
 
     const clearCart = () => setCart({});
 
     const removeItemFromCart = (productId: string, restaurantId: string) => {
         setCart((prevCart) => {
-            const existingCart = prevCart[restaurantId] || [];
+            const existingCart = prevCart[restaurantId]?.items || [];
             const updatedCart = existingCart.filter(item => item.id !== productId);
 
             if (updatedCart.length > 0) {
-                return { ...prevCart, [restaurantId]: updatedCart };
+                return { ...prevCart, [restaurantId]: { ...prevCart[restaurantId], items: updatedCart } };
             } else {
                 const { [restaurantId]: _, ...rest } = prevCart;
                 return rest;
@@ -106,21 +120,22 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     };
 
     const updateItemQuantity = (productId: string, restaurantId: string, quantity: number) => {
-        if (quantity < 1) {
-            removeItemFromCart(productId, restaurantId);
-            return;
-        }
-
         setCart((prevCart) => {
-            const existingCart = prevCart[restaurantId] || [];
+            const existingCart = prevCart[restaurantId]?.items || [];
             return {
                 ...prevCart,
-                [restaurantId]: existingCart.map(item =>
-                    item.id === productId ? { ...item, quantity } : item
-                ),
+                [restaurantId]: {
+                    ...prevCart[restaurantId],
+                    items: existingCart.map(item =>
+                        item.id === productId
+                            ? { ...item, quantity: item.quantity + quantity }
+                            : item
+                    ),
+                },
             };
         });
     };
+
 
     const contextValue = useMemo(() => ({
         cart,
@@ -134,6 +149,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         clearRestaurantCart,
         updateItemQuantity,
     }), [cart]);
+
     return (
         <CartContext.Provider value={contextValue}>
             {children}

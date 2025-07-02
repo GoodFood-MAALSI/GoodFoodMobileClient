@@ -85,7 +85,7 @@ export default function ProfileScreen({ navigation }: any) {
 
           <TouchableOpacity
             style={styles.quickCard}
-            onPress={() => console.log("navigation vers mes commandes")}
+            onPress={() => navigation.navigate('OrderHistory')}
           >
             <Ionicons name="receipt-outline" size={28} color={colors[7]} />
             <Text style={styles.quickCardTitle}>Commandes</Text>

@@ -65,7 +65,7 @@ const useReview = () => {
 
         setIsLoading(true);
         try {
-            const response = await fetch(`${process.env.EXPO_PUBLIC_APP_API_URL + process.env.EXPO_PUBLIC_RESTAURANT_API}/client-review-restaurant/${user?.id}`, {
+            const response = await fetch(`${process.env.EXPO_PUBLIC_APP_API_URL + process.env.EXPO_PUBLIC_RESTAURANT_API}/client-review-restaurant/client/${user?.id}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,

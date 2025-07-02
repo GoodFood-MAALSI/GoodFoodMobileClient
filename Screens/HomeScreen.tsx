@@ -50,22 +50,28 @@ const HomeScreen = ({ navigation }: any) => {
 
     useEffect(() => {
         (async () => {
-            console.log(filteredRestaurants)
             let { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
                 return;
             }
             let location = await Location.getCurrentPositionAsync({});
-
             let reverseGeocode = await Location.reverseGeocodeAsync(location.coords);
+
             setCoords(location.coords);
+
             if (reverseGeocode.length > 0) {
-                const adr = `${reverseGeocode[0].streetNumber || ''} ${reverseGeocode[0].street || ''}, ${reverseGeocode[0].city || ''}`.trim();
+                const adr = `${reverseGeocode[0].streetNumber || ''} ${reverseGeocode[0].street || ''}, ${reverseGeocode[0].city || ''}, ${reverseGeocode[0].postalCode || ''}, ${reverseGeocode[0].country || ''}`.trim();
                 setGeoAddress(adr);
-                if (!selectedAddress) setSelectedAddress(adr);
+                if (!selectedAddress) {
+                    const addressParts = adr.split(',');
+                    const formattedAddress = `${addressParts[0]}, ${addressParts[1]}`.trim();
+                    setSelectedAddress(formattedAddress);
+                    AsyncStorage.setItem('address', adr);
+                }
             }
         })();
     }, []);
+
 
     useEffect(() => {
         const loadFavorites = async () => {
@@ -122,12 +128,18 @@ const HomeScreen = ({ navigation }: any) => {
     const { getItemsNumber } = useCart();
     const itemsNumber = getItemsNumber();
 
-    const selectableAddresses = [geoAddress, ...addresses.map(a => `${a.street_number} ${a.street}, ${a.city}`)];
+    const selectableAddresses = [geoAddress, ...addresses.map(a => `${a.street_number} ${a.street}, ${a.city}, ${a.postal_code}, ${a.country}`)];
 
     const handleSelectAddress = (address: string) => {
         setSelectedAddress(address);
+        AsyncStorage.setItem('address', address);
         setModalVisible(false);
+
+        const addressParts = address.split(',');
+        const formattedAddress = `${addressParts[0]}, ${addressParts[1]}`.trim();
+        setSelectedAddress(formattedAddress);
     };
+
 
     return (
         <SafeAreaView style={styles.container}>

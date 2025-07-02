@@ -2,34 +2,35 @@ import React, { useEffect, useState } from 'react';
 import { View, ScrollView, Text, Image, TouchableOpacity, Alert } from 'react-native';
 import Checkbox from 'expo-checkbox';
 import { Ionicons } from '@expo/vector-icons';
-import * as Location from 'expo-location';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useCart } from '../Context/CartContext';
 import CustomButton from '../Components/CustomButton';
 import theme from '../assets/Styles/themes';
 import styles from '../assets/Styles/ProductDetailsStyles';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ProductDetailsScreen = ({ route, navigation }: any) => {
     const { product, restaurant } = route.params;
     const [address, setAddress] = useState('Chargement de votre adresse...');
-    const [quantity, setQuantity] = useState(1);
+    const [quantity] = useState(1);
     const [selectedOptions, setSelectedOptions] = useState<{ [optionId: number]: number[] }>({});
     const { addItemToCart, getItemsNumber } = useCart();
     const itemsNumber = getItemsNumber();
 
     useEffect(() => {
-        (async () => {
-            const { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
-                return;
+        const loadAddress = async () => {
+            try {
+                const storedAddress = await AsyncStorage.getItem('address') || '';
+
+                const addressParts = storedAddress.split(',');
+                const formattedAddress = `${addressParts[0]}, ${addressParts[1]}`.trim();
+                setAddress(formattedAddress);
+            } catch (error) {
+                console.error('Erreur lors du chargement de l\'adresse :', error);
             }
-            const location = await Location.getCurrentPositionAsync({});
-            const geo = await Location.reverseGeocodeAsync(location.coords);
-            if (geo.length > 0) {
-                const adr = `${geo[0].streetNumber || ''} ${geo[0].street || ''}, ${geo[0].city || ''}`.trim();
-                setAddress(adr);
-            }
-        })();
+        };
+
+        loadAddress();
     }, []);
 
     const toggleOption = (optionId: number, valueId: number, isMultiple: boolean) => {
@@ -84,7 +85,8 @@ const ProductDetailsScreen = ({ route, navigation }: any) => {
                     ...product,
                     selectedOptions,
                 },
-                restaurant?.name
+                restaurant?.name,
+                restaurant?.id
             );
         }
         Alert.alert('Produit ajouté', `${quantity} x ${product.name} ajouté(s) au panier.`);

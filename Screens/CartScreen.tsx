@@ -1,123 +1,61 @@
-import React from "react";
-import { View, Text, Image, FlatList, SafeAreaView, Alert, TouchableOpacity } from 'react-native';
-import CustomButton from '../Components/CustomButton';
+import React, { useState } from 'react';
+import { View, Text, Image, FlatList, SafeAreaView, TouchableOpacity } from 'react-native';
 import { useCart } from "../Context/CartContext";
 import theme from '../assets/Styles/themes';
 import styles from "../assets/Styles/CartStyles";
+import CustomButton from '../Components/CustomButton';
 
 const CartScreen = ({ navigation }: any) => {
-    const {
-        cart,
-        getItemsNumber,
-        getCartPrice,
-        getCartPriceById,
-        clearCart,
-        removeItemFromCart,
-        clearRestaurantCart,
-        updateItemQuantity
-    } = useCart();
-    const itemsNumber = getItemsNumber();
-    const totalPrice = getCartPrice();
+    const { cart, clearRestaurantCart, getCartPriceById } = useCart();
+    const renderRestaurantCard = ({ item }: any) => {
+        const [restaurantId, { restaurantInfo, items }] = item;
+        const restaurantPrice = getCartPriceById(restaurantId);
+        const itemsNumber = items.length;
 
-    const renderCartItem = ({ item }: any, restaurantId: string) => (
-        <View style={styles.itemContainer}>
-            <Image source={item.image} style={styles.productImage} />
-            <View style={styles.infoContainer}>
-                <Text style={styles.title}>{item.name}</Text>
-                <Text style={styles.price}>{item.price} €</Text>
-                <View style={styles.quantityContainer}>
-                    <TouchableOpacity onPress={() => updateItemQuantity(item.id, restaurantId, item.quantity - 1)}>
-                        <Text style={styles.quantityButton}>-</Text>
-                    </TouchableOpacity>
-                    <Text style={styles.quantity}>{item.quantity}</Text>
-                    <TouchableOpacity onPress={() => updateItemQuantity(item.id, restaurantId, item.quantity + 1)}>
-                        <Text style={styles.quantityButton}>+</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => removeItemFromCart(item.id, restaurantId)}>
-                        <Text style={styles.removeButton}>🗑️</Text>
+        return (
+            <View style={styles.restaurantCardContainer}>
+                <View style={styles.topPartContainer}>
+                    <Image source={{ uri: items[0]?.image }} style={styles.restaurantImage} />
+                    <View style={styles.restaurantInfo}>
+                        <Text style={styles.restaurantTitle}>{restaurantInfo.name}</Text>
+                        <Text style={styles.restaurantDetails}>
+                            {itemsNumber} articles | {restaurantPrice.toFixed(2)} €
+                        </Text>
+                    </View>
+                </View>
+
+                <View style={styles.bottomPartContainer}>
+                    <CustomButton
+                        text="Voir le panier"
+                        onPress={() => navigation.navigate('RestaurantCart', { restaurantInfo })}
+                        backgroundColor={theme.colors.primary}
+                        style={styles.actionButton}
+                    />
+                    <TouchableOpacity
+                        style={styles.removeButton}
+                        onPress={() => clearRestaurantCart(restaurantId)}
+                    >
+                        <Text style={styles.removeButtonText}>🗑️</Text>
                     </TouchableOpacity>
                 </View>
             </View>
-        </View>
-    );
-
-    const renderRestaurantCart = ({ item }: any) => {
-        const [restaurantId, items] = item;
-        const restaurantPrice = getCartPriceById(restaurantId);
-
-        return (
-            <View key={restaurantId} style={styles.restaurantContainer}>
-                <Text style={styles.restaurantTitle}>Restaurant : {restaurantId}</Text>
-                <FlatList
-                    data={items}
-                    keyExtractor={(item) => item.id}
-                    renderItem={(props) => renderCartItem(props, restaurantId)}
-                />
-                <Text style={styles.totalPriceText}>
-                    Prix : {restaurantPrice.toFixed(2)} €
-                </Text>
-                <CustomButton
-                    text="Payer"
-                    onPress={() => console.log("Panier payé pour : ", { restaurantId })}
-                    backgroundColor={theme.colors.success}
-                />
-                <CustomButton
-                    text="Supprimer tout le panier"
-                    onPress={() => clearRestaurantCart(restaurantId)}
-                    backgroundColor={theme.colors.danger}
-                />
-            </View>
-        );
-    };
-
-
-    const handleClearCart = () => {
-        Alert.alert(
-            "Vider le panier",
-            "Êtes-vous sûr de vouloir vider tout le panier ?",
-            [
-                {
-                    text: "Annuler",
-                    style: "cancel",
-                },
-                {
-                    text: "Oui",
-                    onPress: () => {
-                        clearCart();
-                    },
-                    style: "destructive",
-                },
-            ]
         );
     };
 
     return (
         <SafeAreaView style={styles.container}>
-            <Text style={styles.headerText}>Votre panier ({itemsNumber} articles)</Text>
+            <Text style={styles.headerText}>Votre panier ({Object.keys(cart).length} restaurants)</Text>
 
             {Object.keys(cart).length > 0 ? (
-                <>
-                    <FlatList
-                        data={Object.entries(cart)}
-                        keyExtractor={(item) => item[0]}
-                        renderItem={renderRestaurantCart}
-                    />
-                    <Text style={styles.totalPriceText}>Total : {totalPrice.toFixed(2)} €</Text>
-                    <CustomButton
-                        text="Vider le panier"
-                        onPress={handleClearCart}
-                        backgroundColor={theme.colors.danger}
-                    />
-                </>
+                <FlatList
+                    data={Object.entries(cart)}
+                    keyExtractor={(item) => item[0]}
+                    renderItem={renderRestaurantCard}
+                />
             ) : (
                 <View>
                     <Text style={styles.emptyCartTextTitle}>Votre panier est vide.</Text>
-                    <Text style={styles.emptyCartText}>Ajouter des articles à votre panier pour les visualiser ici.</Text>
-                    <CustomButton
-                        text="Commander"
-                        onPress={() => navigation.navigate('Tabs', {screen: "Accueil"})}
-                        backgroundColor={theme.colors[6]}
-                    />
+                    <Text style={styles.emptyCartText}>Ajoutez des articles à votre panier pour les visualiser ici.</Text>
                 </View>
             )}
         </SafeAreaView>
