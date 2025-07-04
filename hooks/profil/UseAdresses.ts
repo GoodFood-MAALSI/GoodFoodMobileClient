@@ -92,6 +92,11 @@ const useUserAddresses = () => {
                 setError("Adresse non reconnue. Veuillez vérifier l'exactitude.");
                 return;
             }
+
+            const coordinates = found.geometry.coordinates;
+            addressData.lat = coordinates[1];
+            addressData.long = coordinates[0];
+
         } catch (err) {
             console.error("Erreur lors de la vérification de l'adresse:", err);
             setError("Impossible de valider l'adresse. Veuillez réessayer plus tard.");

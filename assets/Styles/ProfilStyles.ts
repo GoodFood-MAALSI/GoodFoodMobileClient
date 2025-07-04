@@ -22,6 +22,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#666',
   },
+  addressContainer: {
+    flex: 1,
+    marginRight: 10,
+    flexShrink: 1,
+  },
   value: {
     fontSize: 18,
     marginBottom: 20,

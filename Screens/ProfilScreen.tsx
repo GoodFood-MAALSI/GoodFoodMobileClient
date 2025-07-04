@@ -122,9 +122,9 @@ export default function ProfileScreen({ navigation }: any) {
 
           {addresses.map((address: any) => (
             <View key={address.id} style={styles.row}>
-              <View>
+              <View style={styles.addressContainer}>
                 <Text style={styles.label}>{address.name || 'Adresse'}</Text>
-                <Text style={styles.value}>
+                <Text style={styles.value} numberOfLines={2}>
                   🏠 {address.street_number} {address.street}, {address.postal_code} {address.city}
                 </Text>
               </View>

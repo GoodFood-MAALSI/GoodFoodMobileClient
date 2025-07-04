@@ -22,6 +22,38 @@ const AddressModal: React.FC<AddressModalProps> = ({ visible, onClose, onSubmit,
   const [showMap, setShowMap] = useState(false);
   const [markerCoords, setMarkerCoords] = useState<{ latitude: number, longitude: number } | null>(null);
 
+  const [userLocation, setUserLocation] = useState<{ latitude: number, longitude: number } | null>(null);
+
+  useEffect(() => {
+    const getUserLocation = async () => {
+      try {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+          console.error('Permission to access location was denied');
+          return;
+        }
+        let location = await Location.getCurrentPositionAsync({});
+        setUserLocation(location.coords);
+
+        const reverseGeocode = await Location.reverseGeocodeAsync(location.coords);
+        const first = reverseGeocode[0];
+        if (first) {
+          setStreetNumber(first?.streetNumber || '');
+          setStreet(first?.street || '');
+          setCity(first?.city || '');
+          setPostalCode(first?.postalCode || '');
+          setCountry(first?.country || '');
+        }
+      } catch (error) {
+        console.error('Error getting location:', error);
+      }
+    };
+
+    if (visible) {
+      getUserLocation();
+    }
+  }, [visible]);
+
   useEffect(() => {
     if (addressToEdit) {
       setName(addressToEdit.name || '');
@@ -33,7 +65,6 @@ const AddressModal: React.FC<AddressModalProps> = ({ visible, onClose, onSubmit,
       setIsDefault(addressToEdit.is_default);
     }
   }, [addressToEdit]);
-
 
   const handleSubmit = () => {
     const addressData = {
@@ -130,8 +161,8 @@ const AddressModal: React.FC<AddressModalProps> = ({ visible, onClose, onSubmit,
         <MapView
           style={{ flex: 1 }}
           initialRegion={{
-            latitude: 48.8566,
-            longitude: 2.3522,
+            latitude: userLocation?.latitude || 48.8566,
+            longitude: userLocation?.longitude || 2.3522,
             latitudeDelta: 0.01,
             longitudeDelta: 0.01,
           }}
