@@ -13,8 +13,8 @@ const fetchRestaurants = async (searchQuery: string, lat?: number, long?: number
   if (category !== null && category !== undefined) {
     queryParams.append('restaurant_type', category.toString());
   }
+  queryParams.append('is_open', 'true');
   const url = `${process.env.EXPO_PUBLIC_APP_API_URL + process.env.EXPO_PUBLIC_RESTAURANT_API}/restaurant?${queryParams.toString()}`;
-
   const response = await fetch(url, {
     method: 'GET',
     headers: {

@@ -263,7 +263,12 @@ const HomeScreen = ({ navigation }: any) => {
                         style={styles.restaurantCard}
                         onPress={() => navigation.navigate('RestaurantMenu', { restaurant: item })}
                     >
-                        <Image source={item.image} style={styles.restaurantImage} />
+                        {item.images && item.images.length > 0 && (
+                            <Image
+                                source={{ uri: process.env.EXPO_PUBLIC_APP_API_URL + process.env.EXPO_PUBLIC_RESTAURANT_API + item.images[0].path }}
+                                style={styles.restaurantImage}
+                            />
+                        )}
                         <View style={styles.restaurantInfo}>
                             <Text style={styles.restaurantName}>{item.name}</Text>
                             {item.average_rating != null && (

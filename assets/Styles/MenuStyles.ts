@@ -67,10 +67,16 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
         elevation: 3,
     },
+    restaurantImage: {
+        width: '100%',
+        height: 200,
+        marginBottom: 15,
+    },
     menuImage: {
-        width: 80,
-        height: 80,
-        borderRadius: theme.spacing.borderRadius.lg,
+        width: 100,
+        height: 100,
+        borderRadius: 10,
+        marginRight: 10,
     },
     menuInfo: {
         flex: 1,

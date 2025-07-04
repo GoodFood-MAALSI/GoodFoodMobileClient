@@ -26,15 +26,13 @@ const RestaurantMenuScreen = ({ route, navigation }: any) => {
     const loadAddress = async () => {
       try {
         const storedAddress = await AsyncStorage.getItem('address') || '';
-
-          const addressParts = storedAddress.split(',');
-          const formattedAddress = `${addressParts[0]}, ${addressParts[1]}`.trim();
-          setAddress(formattedAddress);
+        const addressParts = storedAddress.split(',');
+        const formattedAddress = `${addressParts[0]}, ${addressParts[1]}`.trim();
+        setAddress(formattedAddress);
       } catch (error) {
         console.error('Erreur lors du chargement de l\'adresse :', error);
       }
     };
-
     loadAddress();
   }, []);
 
@@ -53,7 +51,8 @@ const RestaurantMenuScreen = ({ route, navigation }: any) => {
 
   const filteredItems = restaurantData.menuCategories
     .filter((cat: any) => !selectedCategoryId || cat.id === selectedCategoryId)
-    .flatMap((cat: any) => cat.menuItems);
+    .flatMap((cat: any) => cat.menuItems)
+    .sort((a: any, b: any) => a.position - b.position);
 
   const handleAddReview = () => {
     setReviewModalVisible(true);
@@ -83,7 +82,15 @@ const RestaurantMenuScreen = ({ route, navigation }: any) => {
           </TouchableOpacity>
         </View>
       </View>
+
       <Text style={styles.title}>{restaurant.name}</Text>
+      {restaurant.images && restaurant.images.length > 0 && (
+        <Image
+          source={{ uri: process.env.EXPO_PUBLIC_APP_API_URL + process.env.EXPO_PUBLIC_RESTAURANT_API + restaurant.images[0].path }}
+          style={styles.restaurantImage}
+          resizeMode="cover"
+        />
+      )}
       <Text style={styles.restaurantAddress}>
         {restaurant.street_number} {restaurant.street}, {restaurant.city}
       </Text>
@@ -102,6 +109,7 @@ const RestaurantMenuScreen = ({ route, navigation }: any) => {
         activeTab={selectedCategoryId?.toString() || 'all'}
         onTabChange={(key: string) => setSelectedCategoryId(key === 'all' ? null : parseInt(key))}
       />
+
       <FlatList
         data={filteredItems}
         keyExtractor={(item) => item.id.toString()}
@@ -110,7 +118,13 @@ const RestaurantMenuScreen = ({ route, navigation }: any) => {
             style={styles.menuCard}
             onPress={() => navigation.navigate('ProductDetails', { product: item, restaurant: restaurantData })}
           >
-            <Image source={{ uri: item.picture }} style={styles.menuImage} />
+            {/* {item.picture && (
+              <Image
+                source={{ uri: item.picture }}
+                style={styles.menuImage}
+                resizeMode="cover"
+              />
+            )} */}
             <View style={styles.menuInfo}>
               <Text style={styles.menuName}>{item.name}</Text>
               <Text style={styles.menuDescription}>{item.description}</Text>
@@ -124,7 +138,6 @@ const RestaurantMenuScreen = ({ route, navigation }: any) => {
         onClose={() => setReviewModalVisible(false)}
         onSubmit={handleReviewSubmit}
       />
-
     </SafeAreaView>
   );
 };
