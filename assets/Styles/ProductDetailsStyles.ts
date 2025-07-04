@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
         height: 250,
         borderRadius: theme.spacing.borderRadius.md,
         marginBottom: theme.spacing.md,
+        marginTop: theme.spacing.md,
     },
     title: {
         fontSize: theme.spacing.fontSize.xl,

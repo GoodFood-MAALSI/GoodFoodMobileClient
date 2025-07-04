@@ -5,7 +5,7 @@ import colors from './colors';
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#FFF',
+        backgroundColor: '#FFFFFF',
     },
     title: {
         marginTop: theme.spacing.md,
@@ -56,6 +56,11 @@ const styles = StyleSheet.create({
     filterText: {
         fontSize: theme.spacing.fontSize.md,
     },
+    restaurantImage: {
+        width: '100%',
+        height: 200,
+        marginBottom: 15,
+    },
     menuCard: {
         flexDirection: 'row',
         backgroundColor: '#FFF',
@@ -67,35 +72,28 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
         elevation: 3,
     },
-    restaurantImage: {
-        width: '100%',
-        height: 200,
-        marginBottom: 15,
-    },
     menuImage: {
         width: 100,
         height: 100,
-        borderRadius: 10,
-        marginRight: 10,
+        borderTopLeftRadius: 10,
+        borderBottomLeftRadius: 10,
     },
     menuInfo: {
+        padding: 10,
         flex: 1,
-        marginLeft: theme.spacing.md,
         justifyContent: 'center',
     },
     menuName: {
-        fontSize: theme.spacing.fontSize.md,
+        fontSize: 18,
         fontWeight: 'bold',
     },
     menuDescription: {
-        fontSize: theme.spacing.fontSize.sm,
+        fontSize: 14,
         color: '#666',
-        marginBottom: theme.spacing.sm,
     },
     menuPrice: {
-        fontSize: theme.spacing.fontSize.sm,
-        color: theme.colors.text,
-        marginBottom: theme.spacing.sm,
+        fontSize: 14,
+        color: '#666',
     },
     iconContainer: {
         position: 'relative',

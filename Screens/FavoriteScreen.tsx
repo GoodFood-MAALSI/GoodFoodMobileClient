@@ -48,7 +48,7 @@ const FavoriteScreen = ({ navigation }: any) => {
                         onPress={() => navigation.navigate('RestaurantMenu', { restaurant: item })}
                     >
                         <View style={styles.card}>
-                            <Image source={item.image} style={styles.image} />
+                            <Image source={{ uri: process.env.EXPO_PUBLIC_APP_API_URL + process.env.EXPO_PUBLIC_RESTAURANT_API + item.images[0].path }} style={styles.image} />
                             <View style={styles.info}>
                                 <Text style={styles.name}>{item.name}</Text>
                                 <Text style={styles.address}>{item.street_number} {item.street}, {item.city}</Text>

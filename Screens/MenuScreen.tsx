@@ -118,13 +118,12 @@ const RestaurantMenuScreen = ({ route, navigation }: any) => {
             style={styles.menuCard}
             onPress={() => navigation.navigate('ProductDetails', { product: item, restaurant: restaurantData })}
           >
-            {/* {item.picture && (
+            {item.images && (
               <Image
-                source={{ uri: item.picture }}
+                source={{ uri: process.env.EXPO_PUBLIC_APP_API_URL + process.env.EXPO_PUBLIC_RESTAURANT_API + item.images[0].path }}
                 style={styles.menuImage}
-                resizeMode="cover"
               />
-            )} */}
+            )}
             <View style={styles.menuInfo}>
               <Text style={styles.menuName}>{item.name}</Text>
               <Text style={styles.menuDescription}>{item.description}</Text>

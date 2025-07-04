@@ -21,7 +21,6 @@ const ProductDetailsScreen = ({ route, navigation }: any) => {
         const loadAddress = async () => {
             try {
                 const storedAddress = await AsyncStorage.getItem('address') || '';
-
                 const addressParts = storedAddress.split(',');
                 const formattedAddress = `${addressParts[0]}, ${addressParts[1]}`.trim();
                 setAddress(formattedAddress);
@@ -76,6 +75,8 @@ const ProductDetailsScreen = ({ route, navigation }: any) => {
         return (parseFloat(product.price) + extra) * quantity;
     };
 
+    console.log(JSON.stringify(product.menuItemOptions, null, 2));
+
     const handleAddToCart = () => {
         if (!validateSelections()) return;
 
@@ -91,7 +92,6 @@ const ProductDetailsScreen = ({ route, navigation }: any) => {
         }
         Alert.alert('Produit ajouté', `${quantity} x ${product.name} ajouté(s) au panier.`);
     };
-
 
     return (
         <SafeAreaView style={styles.container}>
@@ -114,7 +114,7 @@ const ProductDetailsScreen = ({ route, navigation }: any) => {
                 </View>
             </View>
             <ScrollView contentContainerStyle={styles.subcontainer} showsVerticalScrollIndicator={false}>
-                <Image source={{ uri: product.picture }} style={styles.productImage} />
+                <Image source={{ uri: process.env.EXPO_PUBLIC_APP_API_URL + process.env.EXPO_PUBLIC_RESTAURANT_API + product.images[0].path }} style={styles.productImage} />
                 <Text style={styles.title}>{product.name}</Text>
                 <Text style={styles.price}>{calculateTotalPrice().toFixed(2)} €</Text>
                 <Text style={styles.description}>{product.description}</Text>
@@ -129,28 +129,30 @@ const ProductDetailsScreen = ({ route, navigation }: any) => {
                             </View>
                             {option.is_required && <Text style={styles.optionRequired}>Obligatoire</Text>}
                         </View>
-                        {option.menuItemOptionValues.map((val: any) => {
-                            const isSelected = selectedOptions[option.id]?.includes(val.id);
-                            return (
-                                <TouchableOpacity
-                                    key={val.id}
-                                    style={styles.optionItem}
-                                    onPress={() => toggleOption(option.id, val.id, option.is_multiple_choice)}
-                                >
-                                    <View style={styles.checkboxContainer}>
-                                        <Checkbox
-                                            value={isSelected}
-                                            onValueChange={() => toggleOption(option.id, val.id, option.is_multiple_choice)}
-                                            style={styles.checkbox}
-                                        />
-                                        <Text>
-                                            {val.name}
-                                            {parseFloat(val.extra_price) > 0 && ` (+${val.extra_price} €)`}
-                                        </Text>
-                                    </View>
-                                </TouchableOpacity>
-                            );
-                        })}
+                        {option.menuItemOptionValues
+                            .sort((a: any, b: any) => a.position - b.position)
+                            .map((val: any) => {
+                                const isSelected = selectedOptions[option.id]?.includes(val.id);
+                                return (
+                                    <TouchableOpacity
+                                        key={val.id}
+                                        style={styles.optionItem}
+                                        onPress={() => toggleOption(option.id, val.id, option.is_multiple_choice)}
+                                    >
+                                        <View style={styles.checkboxContainer}>
+                                            <Checkbox
+                                                value={isSelected}
+                                                onValueChange={() => toggleOption(option.id, val.id, option.is_multiple_choice)}
+                                                style={styles.checkbox}
+                                            />
+                                            <Text>
+                                                {val.name}
+                                                {parseFloat(val.extra_price) > 0 && ` (+${val.extra_price} €)`}
+                                            </Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                );
+                            })}
                     </View>
                 ))}
                 <CustomButton
