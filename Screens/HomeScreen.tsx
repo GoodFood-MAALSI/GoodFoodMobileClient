@@ -62,24 +62,84 @@ const HomeScreen = ({ navigation }: any) => {
             if (reverseGeocode.length > 0) {
                 const adr = `${reverseGeocode[0].streetNumber || ''} ${reverseGeocode[0].street || ''}, ${reverseGeocode[0].city || ''}, ${reverseGeocode[0].postalCode || ''}, ${reverseGeocode[0].country || ''}`.trim();
                 setGeoAddress(adr);
+
                 if (!selectedAddress) {
                     const addressParts = adr.split(',');
                     const formattedAddress = `${addressParts[0]}, ${addressParts[1]}`.trim();
                     setSelectedAddress(formattedAddress);
-                    AsyncStorage.setItem('address', adr);
+                    await AsyncStorage.setItem('address', adr);
+
+                    await AsyncStorage.setItem(
+                        'coordinates',
+                        JSON.stringify({ latitude: location.coords.latitude, longitude: location.coords.longitude })
+                    );
                 }
             }
         })();
     }, []);
 
 
-    useEffect(() => {
-        const loadFavorites = async () => {
-            const stored = await AsyncStorage.getItem('favoriteRestaurants');
-            if (stored) setFavoriteRestaurants(JSON.parse(stored));
-        };
-        loadFavorites();
-    }, []);
+    const selectableAddresses = [geoAddress, ...addresses.map(a => `${a.street_number} ${a.street}, ${a.city}, ${a.postal_code}, ${a.country}`)];
+
+    const handleSelectAddress = async (address: string) => {
+        setSelectedAddress(address);
+        setModalVisible(false);
+
+        const addressParts = address.split(',');
+        const formattedAddress = `${addressParts[0]}, ${addressParts[1]}`.trim();
+        setSelectedAddress(formattedAddress);
+
+        const storedAddresses = await AsyncStorage.getItem('addresses');
+        let parsedAddresses = storedAddresses ? JSON.parse(storedAddresses) : [];
+
+        const selectedAddressData = addresses.find(
+            (a: any) => `${a.street_number} ${a.street}, ${a.city}, ${a.postal_code}, ${a.country}` === address
+        );
+
+        if (!selectedAddressData) {
+            if (address === geoAddress) {
+                const geoCoords = coords;
+                let geoAddressData = {
+                    street_number: '',
+                    street: '',
+                    city: '',
+                    lat: geoCoords?.latitude,
+                    long: geoCoords?.longitude,
+                    postal_code: '',
+                    country: '',
+                };
+
+                const reverseGeocode = await Location.reverseGeocodeAsync(geoCoords);
+                if (reverseGeocode && reverseGeocode.length > 0) {
+                    const geocodeData = reverseGeocode[0];
+                    geoAddressData.street_number = geocodeData.streetNumber || '';
+                    geoAddressData.street = geocodeData.street || '';
+                    geoAddressData.city = geocodeData.city || '';
+                    geoAddressData.postal_code = geocodeData.postalCode || '';
+                    geoAddressData.country = geocodeData.country || '';
+                }
+
+                parsedAddresses.push(geoAddressData);
+                console.log('Adresse géolocalisée sauvegardée:', geoAddressData);
+                await AsyncStorage.setItem('address', JSON.stringify(geoAddressData));
+            }
+        } else {
+            const addressWithCoordinates = {
+                street_number: selectedAddressData.street_number,
+                street: selectedAddressData.street,
+                city: selectedAddressData.city,
+                postal_code: selectedAddressData.postal_code,
+                country: selectedAddressData.country,
+                lat: selectedAddressData.lat,
+                long: selectedAddressData.long,
+            };
+            parsedAddresses.push(addressWithCoordinates);
+            console.log('Adresse sélectionnée avec coordonnées sauvegardées:', addressWithCoordinates);
+            await AsyncStorage.setItem('address', JSON.stringify(addressWithCoordinates));
+        }
+
+        await AsyncStorage.setItem('addresses', JSON.stringify(parsedAddresses));
+    };
 
     const toggleFavorite = async (restaurant: any) => {
         try {
@@ -127,19 +187,6 @@ const HomeScreen = ({ navigation }: any) => {
 
     const { getItemsNumber } = useCart();
     const itemsNumber = getItemsNumber();
-
-    const selectableAddresses = [geoAddress, ...addresses.map(a => `${a.street_number} ${a.street}, ${a.city}, ${a.postal_code}, ${a.country}`)];
-
-    const handleSelectAddress = (address: string) => {
-        setSelectedAddress(address);
-        AsyncStorage.setItem('address', address);
-        setModalVisible(false);
-
-        const addressParts = address.split(',');
-        const formattedAddress = `${addressParts[0]}, ${addressParts[1]}`.trim();
-        setSelectedAddress(formattedAddress);
-    };
-
 
     return (
         <SafeAreaView style={styles.container}>

@@ -44,51 +44,62 @@ const RestaurantCartScreen = ({ route, navigation }: any) => {
             return {
                 menu_item_id: item.id,
                 quantity: item.quantity,
-                unit_price: parseFloat(item.price),
+                unit_price: parseFloat(item?.price),
                 selected_option_value_ids: Object.values(item?.selectedOptions).flat(),
                 notes: item.description || ""
             };
         });
 
-        const address = await AsyncStorage.getItem('address');
-        const geoData = address ? address.split(",") : [];
+        const addressData = await AsyncStorage.getItem('address');
 
-        const [street, city, postalCode, country] = geoData;
-        const streetNumber = street ? street.split(" ")[0] : "";
-        const streetName = street ? street.split(" ").slice(1).join(" ") : "";
+        let addressObj = {};
+        if (addressData) {
+            addressObj = JSON.parse(addressData);
 
-        const totalPrice = restaurantPrice.toFixed(2);
+            const { street_number, street, city, postal_code, country } = addressObj;
+            const { lat, long } = addressObj;
 
-        const orderData = {
-            client_id: clientId,
-            restaurant_id: restaurantId,
-            status_id: 1,
-            description: "Livraison rapide souhaitée",
-            subtotal: parseFloat(totalPrice),
-            delivery_costs: 4.5,
-            service_charge: 2,
-            global_discount: 5,
-            street_number: streetNumber,
-            street: streetName,
-            city: city,
-            postal_code: postalCode,
-            country: country,
-            long: 16,
-            lat: 16,
-            items: formattedItems
-        };
+            const streetNumber = street_number || '';
+            const streetName = street || '';
+            const cityName = city || '';
+            const postalCode = postal_code || '';
+            const countryName = country || '';
 
-        console.log("Order Data: ", JSON.stringify(orderData, null, 2));
+            const totalPrice = restaurantPrice.toFixed(2);
 
-        await createOrder(orderData);
-        if (error) {
-            Alert.alert('Erreur', `Une erreur est survenue lors de la création de la commande: ${error}`);
+            const orderData = {
+                client_id: clientId,
+                restaurant_id: restaurantId,
+                status_id: 1,
+                description: "",
+                subtotal: parseFloat(totalPrice),
+                delivery_costs: 4.5,
+                service_charge: 2,
+                global_discount: 5,
+                street_number: streetNumber,
+                street: streetName,
+                city: cityName,
+                postal_code: postalCode,
+                country: countryName,
+                long: long,
+                lat: lat,
+                items: formattedItems
+            };
+
+            console.log("Order Data: ", JSON.stringify(orderData, null, 2));
+
+            await createOrder(orderData);
+            if (error) {
+                Alert.alert('Erreur', `Une erreur est survenue lors de la création de la commande: ${error}`);
+            } else {
+                restaurantCart.forEach((item) => {
+                    removeItemFromCart(item.id, restaurantInfo.id);
+                });
+                Alert.alert('Commande réussie', 'Votre commande a été validée avec succès!');
+                navigation.navigate('Tabs', { screen: 'Accueil' })
+            }
         } else {
-            restaurantCart.forEach((item) => {
-                removeItemFromCart(item.id, restaurantInfo.id);
-            });
-            Alert.alert('Commande réussie', 'Votre commande a été validée avec succès!');
-            navigation.navigate('Tabs', { screen: 'Accueil' })
+            Alert.alert("Erreur", "L'adresse sélectionnée n'est pas valide.");
         }
     };
 
