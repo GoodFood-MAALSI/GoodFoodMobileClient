@@ -16,33 +16,40 @@ const styles = StyleSheet.create({
     },
     itemContainer: {
         marginBottom: 20,
-        padding: 15,
+        padding: 10,
         borderRadius: 12,
         backgroundColor: '#F8F8F8',
-        elevation: 5,
         flexDirection: 'row',
-        alignItems: 'center',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 3 },
         shadowOpacity: 0.15,
         shadowRadius: 10,
+        gap: 30
     },
     itemTitle: {
         fontSize: 18,
         fontWeight: 'bold',
         color: '#333',
-        flex: 1,
     },
     itemPrice: {
         fontSize: 16,
         color: '#666',
         fontWeight: 'bold',
-        marginLeft: 10,
+        marginTop: 5,
+    },
+    extrasContainer: {
+        marginTop: 5,
+        paddingLeft: 15,
+    },
+    extraPrice: {
+        fontSize: 14,
+        color: '#999',
+        marginTop: 3,
+        fontStyle: 'italic',
     },
     quantityContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginLeft: 10,
     },
     quantityButton: {
         fontSize: 20,
@@ -56,7 +63,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 10,
     },
     removeButton: {
-        marginLeft: 10,
+        marginTop: 10,
         padding: 8,
     },
     removeButtonText: {
@@ -85,6 +92,17 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         color: '#FFF',
+    },
+    restaurantImage: {
+        width: '100%',
+        height: 200,
+        marginBottom: 20,
+    },
+    menuImage: {
+        width: 100,
+        height: 100,
+        borderTopLeftRadius: 10,
+        borderBottomLeftRadius: 10,
     },
 });
 

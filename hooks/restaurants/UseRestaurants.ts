@@ -9,6 +9,8 @@ const fetchRestaurants = async (searchQuery: string, lat?: number, long?: number
   if (searchQuery) queryParams.append('name', searchQuery);
   if (lat) queryParams.append('lat', lat.toString());
   if (long) queryParams.append('long', long.toString());
+  // if (lat) queryParams.append('lat', "50.6357");
+  // if (long) queryParams.append('long', "3.0601");
   if (perimeter) queryParams.append('perimeter', (perimeter * 1000).toString());
   if (category !== null && category !== undefined) {
     queryParams.append('restaurant_type', category.toString());
@@ -19,6 +21,7 @@ const fetchRestaurants = async (searchQuery: string, lat?: number, long?: number
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
     },
   });
 

@@ -30,7 +30,7 @@ interface Cart {
 
 interface CartContextType {
     cart: Cart;
-    addItemToCart: (product: Product, restaurantName: string, restaurantId: string) => void;
+    addItemToCart: (product: Product, restaurantName: string, restaurantId: string, restaurantImage: any) => void;
     clearCart: () => void;
     getItemsNumber: () => number;
     getCartPrice: () => number;
@@ -50,7 +50,7 @@ interface CartProviderProps {
 export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     const [cart, setCart] = useState<Cart>({});
 
-    const addItemToCart = (product: Product, restaurantName: string, restaurantId: string) => {
+    const addItemToCart = (product: Product, restaurantName: string, restaurantId: string, restaurantImage: any) => {
         setCart((prevCart) => {
             const existingCart = prevCart[restaurantId]?.items || [];
             const existingItem = existingCart.find(item => item.id === product.id);
@@ -71,7 +71,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
                 return {
                     ...prevCart,
                     [restaurantId]: {
-                        restaurantInfo: { name: restaurantName, id: restaurantId },
+                        restaurantInfo: { name: restaurantName, id: restaurantId, image: restaurantImage },
                         items: [...existingCart, { ...product, quantity: 1 }],
                     },
                 };
@@ -89,7 +89,24 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
 
     const getCartPriceById = (restaurantId: string) => {
         const restaurantCart = cart[restaurantId]?.items || [];
-        return restaurantCart.reduce((total, item) => total + item.price * item.quantity, 0);
+        console.log(JSON.stringify(restaurantCart, null, 2));
+
+        return restaurantCart.reduce((total, item) => {
+            let itemPrice = parseFloat(item.price);
+            if (item.selectedOptions) {
+                Object.keys(item.selectedOptions).forEach(optionId => {
+                    const selectedOptionValues = item.selectedOptions[optionId];
+                    selectedOptionValues.forEach(optionValueId => {
+                        const option = item.menuItemOptions.find(option => option.id == optionId);
+                        const optionValue = option.menuItemOptionValues.find(value => value.id == optionValueId);
+                        if (optionValue && optionValue.extra_price) {
+                            itemPrice += parseFloat(optionValue.extra_price);
+                        }
+                    });
+                });
+            }
+            return total + itemPrice * item.quantity;
+        }, 0);
     };
 
     const getRestaurantCart = (restaurantId: string) => {

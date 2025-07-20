@@ -75,7 +75,6 @@ const ProductDetailsScreen = ({ route, navigation }: any) => {
         return (parseFloat(product.price) + extra) * quantity;
     };
 
-    console.log(JSON.stringify(product.menuItemOptions, null, 2));
 
     const handleAddToCart = () => {
         if (!validateSelections()) return;
@@ -87,7 +86,8 @@ const ProductDetailsScreen = ({ route, navigation }: any) => {
                     selectedOptions,
                 },
                 restaurant?.name,
-                restaurant?.id
+                restaurant?.id,
+                restaurant?.images
             );
         }
         Alert.alert('Produit ajouté', `${quantity} x ${product.name} ajouté(s) au panier.`);

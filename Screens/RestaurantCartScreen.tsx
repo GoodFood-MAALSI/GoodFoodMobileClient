@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, FlatList, SafeAreaView, TouchableOpacity, Alert } from 'react-native';
+import React from 'react';
+import { View, Text, FlatList, SafeAreaView, TouchableOpacity, Alert, Image } from 'react-native';
 import { useCart } from "../Context/CartContext";
 import { useUser } from '../Context/UserContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -8,7 +8,7 @@ import styles from '../assets/Styles/RestaurantCartStyles';
 
 const RestaurantCartScreen = ({ route, navigation }: any) => {
     const { restaurantInfo } = route.params;
-    const { getRestaurantCart, updateItemQuantity, removeItemFromCart, getCartPriceById } = useCart();
+    const { getRestaurantCart, removeItemFromCart, getCartPriceById } = useCart();
     const { user } = useUser();
     const { createOrder, isLoading, error } = useOrder();
 
@@ -24,17 +24,6 @@ const RestaurantCartScreen = ({ route, navigation }: any) => {
                 { text: "Supprimer", onPress: () => removeItemFromCart(productId, restaurantInfo.id), style: "destructive" },
             ]
         );
-    };
-
-    const handleIncreaseQuantity = (productId: string) => {
-        updateItemQuantity(productId, restaurantInfo.id, 1);
-    };
-
-    const handleDecreaseQuantity = (productId: string, quantity: number) => {
-        if (quantity === 1)
-            handleRemoveItem(productId);
-        else
-            updateItemQuantity(productId, restaurantInfo.id, -1);
     };
 
     const handleValidateCommand = async () => {
@@ -103,30 +92,67 @@ const RestaurantCartScreen = ({ route, navigation }: any) => {
         }
     };
 
-    const renderCartItem = ({ item }: any) => (
-        <View style={styles.itemContainer}>
-            <Text style={styles.itemTitle}>{item.name}</Text>
-            <Text style={styles.itemPrice}>{item.price} €</Text>
+    const renderCartItem = ({ item }: any) => {
+        console.log(item.images[0].path)
+        let itemPrice = parseFloat(item.price);
+        const optionExtras: string[] = [];
 
-            <View style={styles.quantityContainer}>
-                <TouchableOpacity onPress={() => handleDecreaseQuantity(item.id, item.quantity)}>
-                    <Text style={styles.quantityButton}>-</Text>
-                </TouchableOpacity>
-                <Text style={styles.quantity}>{item.quantity}</Text>
-                <TouchableOpacity onPress={() => handleIncreaseQuantity(item.id)}>
-                    <Text style={styles.quantityButton}>+</Text>
-                </TouchableOpacity>
+        if (item.selectedOptions) {
+            Object.keys(item.selectedOptions).forEach(optionId => {
+                const selectedOptionValues = item.selectedOptions[optionId];
+                selectedOptionValues.forEach(optionValueId => {
+                    const option = item.menuItemOptions.find(option => option.id == optionId);
+                    const optionValue = option?.menuItemOptionValues.find(value => value.id == optionValueId);
+                    if (optionValue && optionValue.extra_price) {
+                        itemPrice += parseFloat(optionValue.extra_price);
+                        optionExtras.push(`${optionValue.name} (+${parseFloat(optionValue.extra_price).toFixed(2)} €)`);
+                    }
+                });
+            });
+        }
+
+        return (
+            <View style={styles.itemContainer}>
+                <View>
+                    {item.images && item.images.length > 0 && (
+                        <Image
+                            source={{ uri: process.env.EXPO_PUBLIC_APP_API_URL + process.env.EXPO_PUBLIC_RESTAURANT_API + item.images[0].path }}
+                            style={styles.menuImage}
+                        />
+                    )}
+                </View>
+                <View>
+                    <Text style={styles.itemTitle}>{item.name}</Text>
+                    <Text style={styles.itemPrice}>{item.price} €</Text>
+
+                    {optionExtras.length > 0 && (
+                        <View style={styles.extrasContainer}>
+                            {optionExtras.map((extra, index) => (
+                                <Text key={index} style={styles.extraPrice}>{extra}</Text>
+                            ))}
+                        </View>
+                    )}
+                </View>
+
+                <View>
+                    <TouchableOpacity onPress={() => handleRemoveItem(item.id)} style={styles.removeButton}>
+                        <Text style={styles.removeButtonText}>🗑️</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
-
-            <TouchableOpacity onPress={() => handleRemoveItem(item.id)} style={styles.removeButton}>
-                <Text style={styles.removeButtonText}>🗑️</Text>
-            </TouchableOpacity>
-        </View>
-    );
+        );
+    };
 
     return (
         <SafeAreaView style={styles.container}>
             <Text style={styles.headerText}>Panier de {restaurantInfo.name}</Text>
+            {restaurantInfo?.image && restaurantInfo?.image.length > 0 && (
+                <Image
+                    source={{ uri: process.env.EXPO_PUBLIC_APP_API_URL + process.env.EXPO_PUBLIC_RESTAURANT_API + restaurantInfo?.image[0].path }}
+                    style={styles.restaurantImage}
+                    resizeMode="cover"
+                />
+            )}
 
             <FlatList
                 data={restaurantCart}

@@ -8,6 +8,7 @@ import CustomButton from '../Components/CustomButton';
 const CartScreen = ({ navigation }: any) => {
     const { cart, clearRestaurantCart, getCartPriceById } = useCart();
     const renderRestaurantCard = ({ item }: any) => {
+        console.log("item", item)
         const [restaurantId, { restaurantInfo, items }] = item;
         const restaurantPrice = getCartPriceById(restaurantId);
         const itemsNumber = items.length;
@@ -15,7 +16,12 @@ const CartScreen = ({ navigation }: any) => {
         return (
             <View style={styles.restaurantCardContainer}>
                 <View style={styles.topPartContainer}>
-                    <Image source={{ uri: items[0]?.image }} style={styles.restaurantImage} />
+                    {restaurantInfo?.image && restaurantInfo?.image.length > 0 && (
+                        <Image
+                            source={{ uri: process.env.EXPO_PUBLIC_APP_API_URL + process.env.EXPO_PUBLIC_RESTAURANT_API + restaurantInfo?.image[0].path }}
+                            style={styles.restaurantImage}
+                        />
+                    )}
                     <View style={styles.restaurantInfo}>
                         <Text style={styles.restaurantTitle}>{restaurantInfo.name}</Text>
                         <Text style={styles.restaurantDetails}>
