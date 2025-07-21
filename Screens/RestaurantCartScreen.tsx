@@ -41,11 +41,28 @@ const RestaurantCartScreen = ({ route, navigation }: any) => {
     const handleValidateCommand = async () => {
         const clientId = user.id;
         const restaurantId = restaurantInfo.id;
+
         const formattedItems = restaurantCart.map((item) => {
+            let itemPrice = parseFloat(item?.price);
+
+            if (item.selectedOptions) {
+                Object.keys(item.selectedOptions).forEach(optionId => {
+                    const selectedOptionValues = item.selectedOptions[optionId];
+                    selectedOptionValues.forEach(optionValueId => {
+                        const option = item.menuItemOptions.find(option => option.id == optionId);
+                        const optionValue = option?.menuItemOptionValues.find(value => value.id == optionValueId);
+
+                        if (optionValue && optionValue.extra_price) {
+                            itemPrice += parseFloat(optionValue.extra_price);
+                        }
+                    });
+                });
+            }
+
             return {
                 menu_item_id: item.id,
                 quantity: item.quantity,
-                unit_price: parseFloat(item?.price),
+                unit_price: itemPrice,
                 selected_option_value_ids: Object.values(item?.selectedOptions).flat(),
                 notes: item.description || ""
             };
