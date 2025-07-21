@@ -33,7 +33,14 @@ const useOrder = () => {
             setIsLoading(false);
             return;
         }
-
+        console.log(`${process.env.EXPO_PUBLIC_APP_API_URL + process.env.EXPO_PUBLIC_ORDER_API}/orders`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(orderData),
+            })
         try {
             const response = await fetch(`${process.env.EXPO_PUBLIC_APP_API_URL + process.env.EXPO_PUBLIC_ORDER_API}/orders`, {
                 method: 'POST',
@@ -44,11 +51,15 @@ const useOrder = () => {
                 body: JSON.stringify(orderData),
             });
 
-            if (response.ok) {
+            console.log(response)
+
+            if (response.status === 201) {
                 const data = await response.json();
                 setOrder(data);
                 console.log('Commande créée avec succès');
+                return data;
             } else {
+                console.error('Erreur lors de la création de la commande')
                 setError('Erreur lors de la création de la commande');
             }
         } catch (err) {
@@ -90,6 +101,7 @@ const useOrder = () => {
                 const { data } = await response.json();
                 setOrder(data);
                 console.log('Commande récupérée avec succès');
+                return data;
             } else {
                 setError('Erreur lors de la récupération de la commande');
             }

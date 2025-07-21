@@ -1,19 +1,31 @@
-import React from 'react';
-import { View, Text, FlatList, SafeAreaView, TouchableOpacity, Alert, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, SafeAreaView, TouchableOpacity, Alert, Image, Modal, FlatList } from 'react-native';
 import { useCart } from "../Context/CartContext";
 import { useUser } from '../Context/UserContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useOrder from '../hooks/order/UseOrder';
 import styles from '../assets/Styles/RestaurantCartStyles';
+import MapView, { Marker } from 'react-native-maps';
+import useTrackingOrder from '../hooks/tracking/useTrackingOrder';
 
 const RestaurantCartScreen = ({ route, navigation }: any) => {
     const { restaurantInfo } = route.params;
     const { getRestaurantCart, removeItemFromCart, getCartPriceById } = useCart();
     const { user } = useUser();
-    const { createOrder, isLoading, error } = useOrder();
+    const { createOrder, getOrderById, isLoading, error, order } = useOrder();
+
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [orderId, setOrderId] = useState<any>(null);
+    const [livreurId, setLivreurId] = useState<any>(null);
+    const [verificationCode, setVerificationCode] = useState<any>(null);
+    const [orderStatus, setOrderStatus] = useState<number>(1);
+    const [orderLocation, setOrderLocation] = useState({ latitude: 0, longitude: 0 });
+    const [restaurantLocation, setrestaurantLocation] = useState({ latitude: 0, longitude: 0 });
 
     const restaurantCart = getRestaurantCart(restaurantInfo.id);
     const restaurantPrice = getCartPriceById(restaurantInfo.id);
+
+    const { livreurLocation } = useTrackingOrder(livreurId);
 
     const handleRemoveItem = (productId: string) => {
         Alert.alert(
@@ -57,7 +69,6 @@ const RestaurantCartScreen = ({ route, navigation }: any) => {
             const totalPrice = restaurantPrice.toFixed(2);
 
             const orderData = {
-                client_id: clientId,
                 restaurant_id: restaurantId,
                 status_id: 1,
                 description: "",
@@ -76,8 +87,7 @@ const RestaurantCartScreen = ({ route, navigation }: any) => {
             };
 
             console.log("Order Data: ", JSON.stringify(orderData, null, 2));
-
-            await createOrder(orderData);
+            const data = await createOrder(orderData);
             if (error) {
                 Alert.alert('Erreur', `Une erreur est survenue lors de la création de la commande: ${error}`);
             } else {
@@ -85,6 +95,17 @@ const RestaurantCartScreen = ({ route, navigation }: any) => {
                     removeItemFromCart(item.id, restaurantInfo.id);
                 });
                 Alert.alert('Commande réussie', 'Votre commande a été validée avec succès!');
+                setOrderId(data.data.id);
+                setOrderLocation({
+                    latitude: data.data.lat,
+                    longitude: data.data.long,
+                });
+                setrestaurantLocation({
+                    latitude: data.data.restaurant.lat,
+                    longitude: data.data.restaurant.long,
+                });
+                console.log("Commande créée avec succès. Order ID:", data.data.id);
+                setIsModalVisible(true);
                 navigation.navigate('Tabs', { screen: 'Accueil' })
             }
         } else {
@@ -92,8 +113,32 @@ const RestaurantCartScreen = ({ route, navigation }: any) => {
         }
     };
 
+    const pollOrderStatus = (id: number) => {
+        const intervalId = setInterval(async () => {
+            const data = await getOrderById(id);
+            console.log("Status actuel de la commande:", data.status_id);
+
+            if (data.status_id === 3) {
+                console.log('Commande terminée, statut 3 atteint');
+                clearInterval(intervalId);
+
+                if (data.deliverer_id) {
+                    console.log('Déclenchement du suivi du livreur avec l\'ID:', data.deliverer_id);
+                    setLivreurId(data.deliverer_id);
+                    setVerificationCode(data.delivery.verification_code);
+                    setOrderStatus(data.status_id);
+                }
+            }
+        }, 10000);
+    };
+
+    useEffect(() => {
+        if (orderId && !livreurId) {
+            pollOrderStatus(orderId);
+        }
+    }, [orderId]);
+
     const renderCartItem = ({ item }: any) => {
-        console.log(item.images[0].path)
         let itemPrice = parseFloat(item.price);
         const optionExtras: string[] = [];
 
@@ -167,7 +212,74 @@ const RestaurantCartScreen = ({ route, navigation }: any) => {
                     </View>
                 }
             />
-        </SafeAreaView>
+
+            <Modal
+                visible={isModalVisible}
+                animationType="slide"
+                transparent={false}
+                onRequestClose={() => setIsModalVisible(false)}
+            >
+                <SafeAreaView style={styles.container}>
+                    <TouchableOpacity onPress={() => setIsModalVisible(false)} style={styles.closeButton}>
+                        <Text style={styles.closeButtonText}>Fermer</Text>
+                    </TouchableOpacity>
+
+                    <MapView
+                        style={styles.mapView}
+                        initialRegion={{
+                            latitude: livreurLocation?.coordinates[1] || 50.6357,
+                            longitude: livreurLocation?.coordinates[0] || 3.0601,
+                            latitudeDelta: 0.0922,
+                            longitudeDelta: 0.0421,
+                        }}
+                    >
+
+                        <>
+                            {livreurLocation && (
+                                <Marker
+                                    coordinate={{
+                                        latitude: livreurLocation.coordinates[1],
+                                        longitude: livreurLocation.coordinates[0]
+                                    }}
+                                    title="Livreur"
+                                    pinColor="blue"
+                                    description="Position actuelle du livreur"
+                                />
+                            )}
+                            {orderLocation.latitude !== 0 && orderLocation.longitude !== 0 && (
+                                <Marker
+                                    coordinate={{
+                                        latitude: orderLocation.latitude,
+                                        longitude: orderLocation.longitude,
+                                    }}
+                                    title="Lieu de livraison"
+                                    pinColor="red"
+                                    description="Adresse de livraison"
+                                />
+                            )}
+                            {restaurantLocation.latitude !== 0 && restaurantLocation.longitude !== 0 && (
+                                <Marker
+                                    coordinate={{
+                                        latitude: restaurantLocation.latitude,
+                                        longitude: restaurantLocation.longitude,
+                                    }}
+                                    title="Restaurant"
+                                    pinColor="green"
+                                    description="Adresse du restaurant"
+                                />
+                            )}
+                        </>
+                    </MapView>
+                    {orderStatus === 3 ? (
+                        <Text style={styles.verificationCode}>
+                            Code de vérification : {verificationCode}
+                        </Text>
+                    ) : (
+                        <Text style={styles.waitingText}>Votre commande n'a pas encore été prise en charge par un livreur</Text>
+                    )}
+                </SafeAreaView>
+            </Modal >
+        </SafeAreaView >
     );
 };
 

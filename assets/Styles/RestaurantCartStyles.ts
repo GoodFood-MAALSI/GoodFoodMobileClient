@@ -104,6 +104,34 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 10,
         borderBottomLeftRadius: 10,
     },
+    mapView: {
+        height: '80%',
+    },
+    closeButton: {
+        padding: 10,
+        backgroundColor: theme.colors.danger,
+        borderRadius: 8,
+        margin: 10,
+    },
+    closeButtonText: {
+        color: '#FFF',
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+    verificationCode: {
+        fontSize: 16,
+        color: '#333',
+        fontWeight: 'bold',
+        marginTop: 20,
+        textAlign: 'center',
+    },
+    waitingText: {
+        fontSize: 16,
+        color: '#999',
+        fontStyle: 'italic',
+        textAlign: 'center',
+        marginTop: 20,
+    },
 });
 
 export default styles;
