@@ -17,18 +17,24 @@ const ProductDetailsScreen = ({ route, navigation }: any) => {
     const { addItemToCart, getItemsNumber } = useCart();
     const itemsNumber = getItemsNumber();
 
+    const formatAddress = (address: any) => {
+        if (!address) return 'Adresse non disponible';
+
+        const { street_number, street, city, postal_code, country } = address;
+        return `${street_number || ''} ${street || ''}, ${city || ''}`.trim();
+    };
+
     useEffect(() => {
         const loadAddress = async () => {
             try {
                 const storedAddress = await AsyncStorage.getItem('address') || '';
-                const addressParts = storedAddress.split(',');
-                const formattedAddress = `${addressParts[0]}, ${addressParts[1]}`.trim();
+                const parsedAddress = JSON.parse(storedAddress);
+                const formattedAddress = formatAddress(parsedAddress);
                 setAddress(formattedAddress);
             } catch (error) {
                 console.error('Erreur lors du chargement de l\'adresse :', error);
             }
         };
-
         loadAddress();
     }, []);
 

@@ -67,12 +67,16 @@ const HomeScreen = ({ navigation }: any) => {
                     const addressParts = adr.split(',');
                     const formattedAddress = `${addressParts[0]}, ${addressParts[1]}`.trim();
                     setSelectedAddress(formattedAddress);
-                    await AsyncStorage.setItem('address', adr);
-
-                    await AsyncStorage.setItem(
-                        'coordinates',
-                        JSON.stringify({ latitude: location.coords.latitude, longitude: location.coords.longitude })
-                    );
+                    const fullAddress = {
+                        street_number: reverseGeocode[0].streetNumber || '',
+                        street: reverseGeocode[0].street || '',
+                        city: reverseGeocode[0].city || '',
+                        postal_code: reverseGeocode[0].postalCode || '',
+                        country: reverseGeocode[0].country || '',
+                        lat: location.coords.latitude,
+                        long: location.coords.longitude,
+                    };
+                    await AsyncStorage.setItem('address', JSON.stringify(fullAddress));
                 }
             }
         })();
@@ -130,8 +134,8 @@ const HomeScreen = ({ navigation }: any) => {
                 city: selectedAddressData.city,
                 postal_code: selectedAddressData.postal_code,
                 country: selectedAddressData.country,
-                lat: selectedAddressData.lat,
-                long: selectedAddressData.long,
+                lat: parseFloat(selectedAddressData.lat),
+                long: parseFloat(selectedAddressData.long),
             };
             parsedAddresses.push(addressWithCoordinates);
             console.log('Adresse sélectionnée avec coordonnées sauvegardées:', addressWithCoordinates);
