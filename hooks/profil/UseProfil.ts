@@ -61,7 +61,7 @@ const useUserProfil = () => {
                 }
             } else {
                 setError('Erreur lors de la mise à jour du nom et prénom');
-                console.error('Erreur mise à jour adresse:', data);
+                console.error('Erreur mise à jour nom et prénom:', data);
                 return false;
             }
         } catch (err) {

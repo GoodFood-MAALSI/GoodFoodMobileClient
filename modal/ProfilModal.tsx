@@ -5,6 +5,13 @@ import styles from '../assets/Styles/AdressModalStyles';
 const ProfilModal = ({ visible, onClose, onSubmit, user }: any) => {
     const [firstName, setFirstName] = useState(user?.first_name || '');
     const [lastName, setLastName] = useState(user?.last_name || '');
+    const [streetNumber] = useState(user?.street_number || '');
+    const [street] = useState(user?.street || '');
+    const [city] = useState(user?.city || '');
+    const [postalCode] = useState(user?.postal_code || '');
+    const [country] = useState(user?.country || '');
+    const [lat] = useState(user?.lat || '');
+    const [long] = useState(user?.long || '');
 
     useEffect(() => {
         if (visible) {
@@ -14,7 +21,18 @@ const ProfilModal = ({ visible, onClose, onSubmit, user }: any) => {
     }, [visible]);
 
     const handleSubmit = () => {
-        onSubmit({ first_name: firstName, last_name: lastName });
+        const updatedUser = {
+            first_name: firstName,
+            last_name: lastName,
+            street_number: streetNumber,
+            street: street,
+            city: city,
+            postal_code: postalCode,
+            country: country,
+            lat: parseFloat(lat),
+            long: parseFloat(long),
+        };
+        onSubmit(updatedUser);
     };
 
     return (

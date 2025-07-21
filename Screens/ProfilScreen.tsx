@@ -26,8 +26,6 @@ export default function ProfileScreen({ navigation }: any) {
     const success = await updateProfil(profilData);
     if (success) {
       setProfilModalVisible(false);
-    } else {
-      console.error("erreur mise à jour prénom et nom")
     }
   };
 
